@@ -1,0 +1,57 @@
+name: freebsd
+on:
+  workflow_dispatch:
+jobs:
+  debug:
+    continue-on-error: true
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: true
+      - uses: vmactions/freebsd-vm@v0.1.6
+        env:
+          VCPKG_INSTALLATION_ROOT: ~/vcpkg
+        with:
+          copyback: true
+          prepare: |
+            pkg install -y cmake ninja zip unzip curl git pkgconf
+          envs: VCPKG_INSTALLATION_ROOT
+          run: |
+            git clone https://github.com/Microsoft/vcpkg.git $VCPKG_INSTALLATION_ROOT --depth 1
+            ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+            cmake --preset=debug
+            cmake --build --preset=debug
+            ctest --preset=debug
+      - uses: actions/upload-artifact@v2
+        with:
+          name: freebsd-x64-dbg
+          path: build/bin/*
+          if-no-files-found: ignore
+  release:
+    continue-on-error: true
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: true
+      - uses: vmactions/freebsd-vm@v0.1.6
+        env:
+          VCPKG_INSTALLATION_ROOT: ~/vcpkg
+        with:
+          copyback: true
+          prepare: |
+            pkg install -y cmake ninja zip unzip curl git pkgconf
+          envs: VCPKG_INSTALLATION_ROOT
+          run: |
+            git clone https://github.com/Microsoft/vcpkg.git $VCPKG_INSTALLATION_ROOT --depth 1
+            ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+            cmake --preset=release
+            cmake --build --preset=release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: freebsd-x64-rel
+          path: build/bin/*
+          if-no-files-found: ignore

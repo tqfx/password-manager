@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "password-manager",
+    "version": "0.1.0",
+    "homepage": "https://github.com/tqfx/password-manager.git",
+    "port-version": 2,
+    "dependencies": [
+        {
+            "name": "getopt",
+            "platform": "windows",
+            "host": true
+        },
+        "sqlite3"
+    ]
+}

@@ -1,0 +1,120 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 10,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "debug",
+            "binaryDir": "build",
+            "installDir": "install",
+            "displayName": "Default configuration for debug",
+            "description": "Default build using default generator for debug",
+            "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "BUILD_TESTING": true,
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "deprecated": true,
+                "dev": false
+            }
+        },
+        {
+            "name": "release",
+            "binaryDir": "build",
+            "displayName": "Default configuration for release",
+            "description": "Default build using default generator for release",
+            "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "deprecated": true,
+                "dev": false
+            }
+        },
+        {
+            "name": "mingw32",
+            "binaryDir": "build",
+            "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "VCPKG_TARGET_TRIPLET": "x86-mingw-static",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "deprecated": true,
+                "dev": false
+            }
+        },
+        {
+            "name": "mingw64",
+            "binaryDir": "build",
+            "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "deprecated": true,
+                "dev": false
+            }
+        },
+        {
+            "name": "termux",
+            "binaryDir": "build",
+            "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "VCPKG_TARGET_TRIPLET": "arm-linux",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "deprecated": true,
+                "dev": false
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configuration": "debug",
+            "configurePreset": "debug",
+            "displayName": "Default build for debug"
+        },
+        {
+            "name": "release",
+            "configuration": "release",
+            "configurePreset": "release",
+            "displayName": "Default build for release"
+        },
+        {
+            "name": "mingw32",
+            "configuration": "release",
+            "configurePreset": "mingw32"
+        },
+        {
+            "name": "mingw64",
+            "configuration": "release",
+            "configurePreset": "mingw64"
+        },
+        {
+            "name": "termux",
+            "configuration": "release",
+            "configurePreset": "termux"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "debug",
+            "configuration": "debug",
+            "configurePreset": "debug"
+        }
+    ]
+}

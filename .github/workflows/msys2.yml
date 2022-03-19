@@ -1,0 +1,40 @@
+name: msys2
+on:
+  workflow_dispatch:
+jobs:
+  MSYS2:
+    continue-on-error: true
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: [
+          { sys: MINGW64, preset: mingw64 },
+          { sys: MINGW32, preset: mingw32 },
+        ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: true
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          location: D:\
+          msystem: ${{ matrix.sys }}
+          pacboy: >-
+            make:p
+            cmake:p
+            toolchain:p
+      - name: Run cmake
+        shell: msys2 {0}
+        env:
+          MSYSTEM: ${{ matrix.sys }}
+        run: |
+          cmake --preset=${{ matrix.preset }} -G "MinGW Makefiles"
+          cmake --build --preset=${{ matrix.preset }} --parallel
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.preset }}-rel
+          path: build/bin/*
+          if-no-files-found: ignore

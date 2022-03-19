@@ -1,0 +1,41 @@
+name: linux
+on:
+  workflow_dispatch:
+jobs:
+  debug:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: true
+      - name: Run cmake
+        run: |
+          cmake --preset=debug
+          cmake --build --preset=debug --target package --parallel
+      - name: Run ctest
+        run: |
+          ctest --preset=debug
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-dbg
+          path: build/bin/*
+          if-no-files-found: ignore
+  release:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: true
+      - name: Run cmake
+        run: |
+          cmake --preset=release
+          cmake --build --preset=release --parallel
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-rel
+          path: build/bin/*
+          if-no-files-found: ignore
