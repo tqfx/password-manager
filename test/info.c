@@ -15,6 +15,10 @@ static void test(size_t n)
     for (size_t i = 0; i != n; ++i)
     {
         m_key_s *key = (m_key_s *)a_vec_push(ctx);
+        if (key == 0)
+        {
+            continue;
+        }
         m_key_ctor(key);
         char buf[0x20];
         sprintf(buf, "%zu", i);

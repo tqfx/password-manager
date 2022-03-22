@@ -38,8 +38,16 @@ int main(int argc, char *argv[])
     for (size_t i = a_vec_len(word); i != n; ++i)
     {
         a_str_s *str = m_word_push(word);
+        if (str == 0)
+        {
+            continue;
+        }
         a_str_printf(str, "%zu", i);
         m_key_s *key = m_info_push(info);
+        if (key == 0)
+        {
+            continue;
+        }
         m_key_set_text(key, a_str_val(str));
     }
 

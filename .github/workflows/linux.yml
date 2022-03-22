@@ -2,9 +2,15 @@ name: linux
 on:
   workflow_dispatch:
 jobs:
-  debug:
-    continue-on-error: true
+  Linux:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: [
+          { name: dbg, preset: debug, target: install },
+          { name: rel, preset: release, target: install/strip },
+        ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -12,30 +18,13 @@ jobs:
           submodules: true
       - name: Run cmake
         run: |
-          cmake --preset=debug
-          cmake --build --preset=debug --target package --parallel
+          cmake --preset=${{ matrix.preset }} -DBUILD_TESTING=ON
+          cmake --build --preset=${{ matrix.preset }} --target ${{ matrix.target }} --parallel
       - name: Run ctest
         run: |
-          ctest --preset=debug
+          ctest --preset=${{ matrix.preset }} --parallel
       - uses: actions/upload-artifact@v2
         with:
-          name: linux-x64-dbg
-          path: build/bin/*
-          if-no-files-found: ignore
-  release:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          lfs: true
-          submodules: true
-      - name: Run cmake
-        run: |
-          cmake --preset=release
-          cmake --build --preset=release --parallel
-      - uses: actions/upload-artifact@v2
-        with:
-          name: linux-x64-rel
-          path: build/bin/*
+          name: linux-x64-${{ matrix.name }}
+          path: install/bin/*
           if-no-files-found: ignore

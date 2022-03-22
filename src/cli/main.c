@@ -17,11 +17,17 @@
 #define OPTION_CLR(stat, mask)    ((stat) &= ~(mask))
 #define OPTION_IS_SET(stat, mask) (((stat) & (mask)) == (mask))
 
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wc++-compat"
+#endif /* _MSC_VER */
+
 #pragma pack(push, 4)
 static struct
 {
     char *file;
-    char *data;
+    char *import;
+    char *export;
     m_key_s key[1];
     m_word_s word[1];
     m_info_s info[1];
@@ -29,7 +35,8 @@ static struct
 } state[1] = {
     {
         .file = 0,
-        .data = 0,
+        .import = 0,
+        .export = 0,
         .option = 0,
     },
 };
@@ -50,6 +57,7 @@ static void main_help(const char *args)
   -p --password  string(\"*\"->\"\")\n\
   -f --filename  filename\n\
      --import    filename\n\
+     --export    filename\n\
 Copyright (C) 2020 tqfx. All rights reserved.";
     printf("%s\n%s\n", args, help);
 }
@@ -84,11 +92,17 @@ static int main_app(char *args)
 
     app_init(state->file);
 
-    if (state->data)
+    if (state->import && state->export)
     {
-        app_import(state->data);
-        free(state->data);
-        state->data = 0;
+        app_convert(state->import, state->export);
+    }
+    else if (state->import)
+    {
+        app_import(state->import);
+    }
+    else if (state->export)
+    {
+        app_export(state->export);
     }
     else if (OPTION_IS_SET(state->option, OPTION_DEL))
     {
@@ -193,24 +207,18 @@ int main(int argc, char *argv[])
         {"blob", required_argument, 0, 'b'},
         {"type", required_argument, 0, 't'},
         {"import", required_argument, 0, 1},
+        {"export", required_argument, 0, 2},
         {"length", required_argument, 0, 'l'},
         {"password", required_argument, 0, 'p'},
         {"filename", required_argument, 0, 'f'},
         {0, 0, 0, 0},
     };
 
-    if (argc == 1)
+    if (argc < 2)
     {
         main_help(*argv);
         exit(EXIT_SUCCESS);
     }
-
-#if defined(_WIN32)
-    if (app_windows_check())
-    {
-        exit(EXIT_FAILURE);
-    }
-#endif /* _WIN32 */
 
     /* init */
     {
@@ -312,12 +320,22 @@ int main(int argc, char *argv[])
         break;
         case 1:
         {
-            if (state->data)
+            if (state->import)
             {
-                free(state->data);
+                free(state->import);
             }
             a_str_puts(ctx, optarg);
-            state->data = a_str_done(ctx);
+            state->import = a_str_done(ctx);
+        }
+        break;
+        case 2:
+        {
+            if (state->export)
+            {
+                free(state->export);
+            }
+            a_str_puts(ctx, optarg);
+            state->export = a_str_done(ctx);
         }
         break;
         default:
@@ -352,9 +370,17 @@ int main(int argc, char *argv[])
         m_word_dtor(state->word);
         m_info_dtor(state->info);
         m_key_dtor(state->key);
+        free(state->export);
+        state->export = 0;
+        free(state->import);
+        state->import = 0;
         free(state->file);
         state->file = 0;
     }
 
     return opt;
 }
+
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif /* _MSC_VER */

@@ -11,7 +11,7 @@ Set the environment variable `VCPKG_INSTALLATION_ROOT` to point to [vcpkg](https
 
 ## release
 
-```
+```bash
 cmake --preset=release
 cmake --build --preset=release
 ```
@@ -26,14 +26,14 @@ sudo apt-get install -y cmake ninja-build zip unzip curl git pkg-config mingw-w6
 
 ### mingw32
 
-```
+```bash
 cmake --preset=mingw32
 cmake --build --preset=mingw32
 ```
 
 ### mingw64
 
-```
+```bash
 cmake --preset=mingw64
 cmake --build --preset=mingw64
 ```
@@ -44,25 +44,25 @@ cmake --build --preset=mingw64
 
 ### mingw32
 
-```
+```bash
 cmake --preset=mingw32 -G "MinGW Makefiles"
 cmake --build --preset=mingw32
 ```
 
 ### mingw64
 
-```
+```bash
 cmake --preset=mingw64 -G "MinGW Makefiles"
 cmake --build --preset=mingw64
 ```
 
 ## termux
 
-```
+```bash
 pkg install -y clang cmake ninja zip unzip curl git pkg-config
 ```
 
-```
+```bash
 cmake --preset=termux
 cmake --build --preset=termux
 ```

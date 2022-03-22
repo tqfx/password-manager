@@ -15,7 +15,7 @@
             "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "BUILD_TESTING": true,
-                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_BUILD_TYPE": "debug",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true
             },
             "warnings": {
@@ -26,11 +26,12 @@
         {
             "name": "release",
             "binaryDir": "build",
+            "installDir": "install",
             "displayName": "Default configuration for release",
             "description": "Default build using default generator for release",
             "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "release",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true
             },
             "warnings": {
@@ -41,9 +42,10 @@
         {
             "name": "mingw32",
             "binaryDir": "build",
+            "installDir": "install",
             "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "release",
                 "VCPKG_TARGET_TRIPLET": "x86-mingw-static",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true
             },
@@ -55,9 +57,10 @@
         {
             "name": "mingw64",
             "binaryDir": "build",
+            "installDir": "install",
             "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "release",
                 "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true
             },
@@ -69,9 +72,10 @@
         {
             "name": "termux",
             "binaryDir": "build",
+            "installDir": "install",
             "toolchainFile": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "release",
                 "VCPKG_TARGET_TRIPLET": "arm-linux",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true
             },
@@ -115,6 +119,11 @@
             "name": "debug",
             "configuration": "debug",
             "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "configuration": "release",
+            "configurePreset": "release"
         }
     ]
 }

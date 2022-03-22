@@ -17,3 +17,7 @@ add_test(NAME t_sqlite COMMAND t_sqlite)
 add_executable(t_generate generate.c)
 target_link_libraries(t_generate manager)
 add_test(NAME t_generate COMMAND t_generate)
+
+add_executable(t_json json.c)
+target_link_libraries(t_json manager)
+add_test(NAME t_json COMMAND t_json)

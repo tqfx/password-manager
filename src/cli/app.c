@@ -143,7 +143,7 @@ int app_init(const char *fname)
     STATUS_CLR(state->status, STATUS_DONE);
 
     int ret = sqlite3_open(fname, &state->db);
-    if (ret)
+    if (ret != SQLITE_OK)
     {
         fprintf(stderr, "%s\n", sqlite3_errmsg(state->db));
         exit(EXIT_FAILURE);
@@ -459,19 +459,92 @@ int app_generate_key(const m_key_s *key)
     return ret;
 }
 
+#include "m_json.h"
+#include "m_io.h"
+
+static int app_import_(m_info_s *info, const char *in)
+{
+    AASSERT(in);
+    AASSERT(info);
+    int ret = ~0;
+    cJSON *json = 0;
+    ret = m_json_load(&json, in);
+    if (json)
+    {
+        ret = m_json_export_info(json, info);
+        cJSON_Delete(json);
+        return ret;
+    }
+    sqlite3 *db = 0;
+    ret = sqlite3_open(in, &db);
+    if (ret == SQLITE_OK)
+    {
+        return m_sqlite_out_info(db, info);
+    }
+    fprintf(stderr, "%s\n", sqlite3_errmsg(db));
+    sqlite3_close(db);
+    return ret;
+}
+
+static int app_export_(m_info_s *info, const char *out)
+{
+    AASSERT(out);
+    AASSERT(info);
+    if (strstr(out, ".db"))
+    {
+        sqlite3 *db = 0;
+        int ret = sqlite3_open(out, &db);
+        if (ret == SQLITE_OK)
+        {
+            m_sqlite_create_info(db);
+            m_sqlite_begin(db);
+            m_sqlite_add_info(db, info);
+            m_sqlite_commit(db);
+        }
+        sqlite3_close(db);
+        return ret;
+    }
+    else
+    {
+        cJSON *json = 0;
+        m_json_import_info(&json, info);
+        char *str = cJSON_PrintUnformatted(json);
+        if (str)
+        {
+            m_io_write(out, str, strlen(str));
+            free(str);
+        }
+        cJSON_Delete(json);
+        return 0;
+    }
+}
+
+int app_convert(const char *in, const char *out)
+{
+    AASSERT(in);
+    AASSERT(out);
+    int ret = ~0;
+    m_info_s *info = m_info_new();
+    ret = app_import_(info, in);
+    if (ret)
+    {
+        goto label_exit;
+    }
+    ret = app_export_(info, out);
+    if (ret)
+    {
+        goto label_exit;
+    }
+label_exit:
+    m_info_delete(info);
+    return ret;
+}
+
 int app_import(const char *fname)
 {
     AASSERT(fname);
-    sqlite3 *db = 0;
     m_info_s *info = m_info_new();
-    int ret = sqlite3_open(fname, &db);
-    if (ret)
-    {
-        fprintf(stderr, "%s\n", sqlite3_errmsg(db));
-        exit(EXIT_FAILURE);
-    }
-    ret = m_sqlite_out_info(db, info);
-    sqlite3_close(db);
+    int ret = app_import_(info, fname);
     if (a_vec_len(info) && ret == 0)
     {
         STATUS_SET(state->status, STATUS_MODK);
@@ -490,26 +563,8 @@ int app_import(const char *fname)
     return ret;
 }
 
-#if defined(_WIN32)
-#include <windows.h>
-int app_windows_check(void)
+int app_export(const char *fname)
 {
-    FILE *pip = popen("chcp.com", "r");
-    if (pip == 0)
-    {
-        return ~0;
-    }
-    while ((fgetc(pip) != ':') && !feof(pip))
-    {
-    }
-    unsigned int in = 0;
-    fscanf(pip, "%u", &in);
-    pclose(pip);
-    unsigned int acp = GetOEMCP();
-    if (in != acp)
-    {
-        fprintf(stderr, "Active code page %u does not match %u!\n", in, acp);
-    }
-    return in != acp;
+    AASSERT(fname);
+    return app_export_(state->info, fname);
 }
-#endif /* _WIN32 */

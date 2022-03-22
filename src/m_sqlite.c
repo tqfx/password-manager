@@ -22,14 +22,14 @@ static struct
 } state[1] = {
     {
         .sql = 0,
-        .word = "WORD",
-        .word_text = "TEXT",
-        .info = "INFO",
-        .info_url = "URL",
-        .info_text = "TEXT",
-        .info_blob = "BLOB",
-        .info_size = "SIZE",
-        .info_type = "TYPE",
+        .word = "word",
+        .word_text = "text",
+        .info = "info",
+        .info_url = "url",
+        .info_text = "text",
+        .info_blob = "blob",
+        .info_size = "size",
+        .info_type = "type",
     },
 };
 
@@ -37,7 +37,7 @@ int m_sqlite_begin(sqlite3 *db)
 {
     AASSERT(db);
     sqlite3_stmt *stmt = 0;
-    sqlite3_prepare(db, "BEGIN;", -1, &stmt, 0);
+    sqlite3_prepare(db, "begin;", -1, &stmt, 0);
     sqlite3_step(stmt);
     return sqlite3_finalize(stmt);
 }
@@ -46,7 +46,7 @@ int m_sqlite_commit(sqlite3 *db)
 {
     AASSERT(db);
     sqlite3_stmt *stmt = 0;
-    sqlite3_prepare(db, "COMMIT;", -1, &stmt, 0);
+    sqlite3_prepare(db, "commit;", -1, &stmt, 0);
     sqlite3_step(stmt);
     return sqlite3_finalize(stmt);
 }
@@ -56,7 +56,7 @@ int m_sqlite_create_word(sqlite3 *db)
     AASSERT(db);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "CREATE TABLE IF NOT EXISTS %s(%s TEXT NOT NULL PRIMARY KEY);";
+    state->sql = "create table if not exists %s(%s text primary key);";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->word, state->word_text);
@@ -73,11 +73,11 @@ int m_sqlite_create_info(sqlite3 *db)
     AASSERT(db);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "CREATE TABLE IF NOT EXISTS %s("
-                 "%s TEXT NOT NULL PRIMARY KEY,"
-                 "%s INTEGER NOT NULL,"
-                 "%s INTEGER NOT NULL,"
-                 "%s TEXT,%s TEXT);";
+    state->sql = "create table if not exists %s("
+                 "%s text primary key,"
+                 "%s integer default 16,"
+                 "%s integer default 0,"
+                 "%s text,%s text);";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->info, state->info_text,
@@ -96,7 +96,7 @@ int m_sqlite_drop_word(sqlite3 *db)
     AASSERT(db);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "DROP TABLE IF EXISTS %s;";
+    state->sql = "drop table if exists %s;";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->word);
@@ -113,7 +113,7 @@ int m_sqlite_drop_info(sqlite3 *db)
     AASSERT(db);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "DROP TABLE IF EXISTS %s;";
+    state->sql = "drop table if exists %s;";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->info);
@@ -145,7 +145,7 @@ int m_sqlite_out_word(sqlite3 *db, m_word_s *out)
     AASSERT(out);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "SELECT * FROM %s;";
+    state->sql = "select * from %s;";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->word);
@@ -173,7 +173,7 @@ int m_sqlite_out_info(sqlite3 *db, m_info_s *out)
     AASSERT(out);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "SELECT * FROM %s ORDER BY %s ASC;";
+    state->sql = "select * from %s order by %s asc;";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->info, state->info_text);
@@ -212,7 +212,7 @@ int m_sqlite_add_word(sqlite3 *db, const m_word_s *in)
     AASSERT(in);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "INSERT INTO %s VALUES(?);";
+    state->sql = "insert into %s values(?);";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->word);
@@ -240,7 +240,7 @@ int m_sqlite_add_info(sqlite3 *db, const m_info_s *in)
     AASSERT(in);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "INSERT INTO %s VALUES(?,?,?,?,?);";
+    state->sql = "insert into %s values(?,?,?,?,?);";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->info);
@@ -285,7 +285,7 @@ int m_sqlite_del_word(sqlite3 *db, const m_word_s *in)
     AASSERT(in);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "DELETE FROM %s WHERE %s = ?;";
+    state->sql = "delete from %s where %s = ?;";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->word, state->word_text);
@@ -313,7 +313,7 @@ int m_sqlite_del_info(sqlite3 *db, const m_info_s *in)
     AASSERT(in);
     sqlite3_stmt *stmt = 0;
 
-    state->sql = "DELETE FROM %s WHERE %s = ?;";
+    state->sql = "delete from %s where %s = ?;";
 
     sqlite3_str *str = sqlite3_str_new(db);
     sqlite3_str_appendf(str, state->sql, state->info, state->info_text);

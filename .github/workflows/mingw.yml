@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 jobs:
   MinGW:
-    continue-on-error: true
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,14 +16,15 @@ jobs:
         with:
           lfs: true
           submodules: true
-      - name: Run apt
-        run: sudo apt-get install -y mingw-w64
+      - name: Run apt-get
+        run: |
+          sudo apt-get install -y mingw-w64
       - name: Run cmake
         run: |
           cmake --preset=${{ matrix.preset }}
-          cmake --build --preset=${{ matrix.preset }} --parallel
+          cmake --build --preset=${{ matrix.preset }} --target install/strip --parallel
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.preset }}-rel
-          path: build/bin/*
+          path: install/bin/*
           if-no-files-found: ignore

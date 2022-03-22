@@ -1,5 +1,5 @@
 # include modules
-include(${CMAKE_CURRENT_LIST_DIR}/append_option.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/value.cmake)
 if("${CMAKE_C_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR
   "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
   append_flag(-fno-omit-frame-pointer -fsanitize=address)

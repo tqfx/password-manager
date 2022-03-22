@@ -9,7 +9,7 @@ endif()
 
 cmake_minimum_required(VERSION 3.10)
 
-project(manager VERSION 0.1.0 LANGUAGES C CXX)
+project(manager VERSION 0.1.1 LANGUAGES C)
 
 include(cmake/check.cmake OPTIONAL)
 include(cmake/output.cmake OPTIONAL)
@@ -31,13 +31,20 @@ if (NOT HAVE_GETOPT_H)
   find_library(getopt_LIBRARIES NAMES getopt)
 endif()
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
+find_package(cJSON CONFIG REQUIRED)
 
 unset(SOURCE)
 aux_source_directory(src SOURCE)
 add_library(${PROJECT_NAME} ${SOURCE})
 target_link_libraries(${PROJECT_NAME} a
   unofficial::sqlite3::sqlite3
+  cjson
   )
+if(MINGW)
+  target_link_options(${PROJECT_NAME} INTERFACE
+    -fstack-protector-strong
+    )
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/src
   )

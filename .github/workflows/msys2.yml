@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 jobs:
   MSYS2:
-    continue-on-error: true
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -32,9 +31,9 @@ jobs:
           MSYSTEM: ${{ matrix.sys }}
         run: |
           cmake --preset=${{ matrix.preset }} -G "MinGW Makefiles"
-          cmake --build --preset=${{ matrix.preset }} --parallel
+          cmake --build --preset=${{ matrix.preset }} --target install/strip --parallel
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.preset }}-rel
-          path: build/bin/*
+          path: install/bin/*
           if-no-files-found: ignore

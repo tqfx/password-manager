@@ -1,13 +1,13 @@
 # Set the compiler C standard
-macro(set_c_standard value)
+macro(set_c_standard variable)
   set(CMAKE_C_EXTENSIONS OFF)
-  set(CMAKE_C_STANDARD ${value})
+  set(CMAKE_C_STANDARD ${variable})
   set(CMAKE_C_STANDARD_REQUIRED ON)
 endmacro()
 # Set the compiler C++ standard
-macro(set_cxx_standard value)
+macro(set_cxx_standard variable)
   set(CMAKE_CXX_EXTENSIONS OFF)
-  set(CMAKE_CXX_STANDARD ${value})
+  set(CMAKE_CXX_STANDARD ${variable})
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endmacro()
 # default C standard
