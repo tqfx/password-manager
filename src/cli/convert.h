@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __CONVERT_H__
 #define __CONVERT_H__
 
@@ -90,5 +90,4 @@ int gbk_utf8(char **out, const void *in);
 #pragma warning(pop)
 #endif /* _MSC_VER */
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __CONVERT_H__ */

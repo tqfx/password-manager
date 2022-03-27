@@ -1,3 +1,0 @@
-[submodule "deps/liba"]
-	path = deps/liba
-	url = https://github.com/tqfx/archive-liba.git

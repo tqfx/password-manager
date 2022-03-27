@@ -62,6 +62,6 @@ int main(void)
         result = 0;
     }
 
-    m_key_delete(ctx);
+    m_key_die(ctx);
     return 0;
 }

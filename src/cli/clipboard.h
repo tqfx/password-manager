@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __CLIPBOARD_H__
 #define __CLIPBOARD_H__
 
@@ -55,5 +55,4 @@ int clipboard_get(char **out);
 #pragma warning(pop)
 #endif /* _MSC_VER */
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __CLIPBOARD_H__ */

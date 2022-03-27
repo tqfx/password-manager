@@ -8,10 +8,12 @@
 
 #include "m_io.h"
 
+#include <assert.h>
+
 int m_json_load(cJSON **out, const char *in)
 {
-    AASSERT(in);
-    AASSERT(out);
+    assert(in);
+    assert(out);
     int ret = ~0;
     void *pdata = 0;
     size_t nbyte = 0;
@@ -26,8 +28,8 @@ int m_json_load(cJSON **out, const char *in)
 
 int m_json_export_info(const cJSON *in, m_info_s *out)
 {
-    AASSERT(in);
-    AASSERT(out);
+    assert(in);
+    assert(out);
     m_key_s key[1];
     cJSON *object;
     int n = cJSON_GetArraySize(in);
@@ -43,10 +45,10 @@ int m_json_export_info(const cJSON *in, m_info_s *out)
         }
         m_key_text(key) = cJSON_GetStringValue(object);
 
-#ifndef _MSC_VER
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbad-function-cast"
-#endif /* _MSC_VER */
+#endif /* __GNUC__ || __clang__ */
 
         object = cJSON_GetObjectItem(item, "size");
         if (object == 0)
@@ -62,9 +64,9 @@ int m_json_export_info(const cJSON *in, m_info_s *out)
         }
         m_key_type(key) = (unsigned int)cJSON_GetNumberValue(object);
 
-#ifndef _MSC_VER
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
-#endif /* _MSC_VER */
+#endif /* __GNUC__ || __clang__ */
 
         if (m_key_type(key) == M_KEY_CUSTOM)
         {
@@ -89,12 +91,12 @@ int m_json_export_info(const cJSON *in, m_info_s *out)
 
 int m_json_import_info(cJSON **out, const m_info_s *in)
 {
-    AASSERT(in);
-    AASSERT(out);
+    assert(in);
+    assert(out);
     *out = cJSON_CreateArray();
     for (size_t i = 0; i != a_vec_len(in); ++i)
     {
-        m_key_s *key = A_VEC_PTR(in, i);
+        m_key_s *key = m_info_at(in, i);
         if (m_key_text(key) == 0)
         {
             continue;

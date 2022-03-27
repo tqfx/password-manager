@@ -18,7 +18,7 @@ static void test(size_t n)
         a_str_printf(str, "%zu", i);
     }
 
-    m_word_delete(ctx);
+    m_word_die(ctx);
 }
 
 int main(void)

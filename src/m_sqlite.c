@@ -6,6 +6,7 @@
 
 #include "m_sqlite.h"
 
+#include <assert.h>
 #include <string.h>
 
 static struct
@@ -35,7 +36,7 @@ static struct
 
 int m_sqlite_begin(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     sqlite3_stmt *stmt = 0;
     sqlite3_prepare(db, "begin;", -1, &stmt, 0);
     sqlite3_step(stmt);
@@ -44,7 +45,7 @@ int m_sqlite_begin(sqlite3 *db)
 
 int m_sqlite_commit(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     sqlite3_stmt *stmt = 0;
     sqlite3_prepare(db, "commit;", -1, &stmt, 0);
     sqlite3_step(stmt);
@@ -53,7 +54,7 @@ int m_sqlite_commit(sqlite3 *db)
 
 int m_sqlite_create_word(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "create table if not exists %s(%s text primary key);";
@@ -70,7 +71,7 @@ int m_sqlite_create_word(sqlite3 *db)
 
 int m_sqlite_create_info(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "create table if not exists %s("
@@ -93,7 +94,7 @@ int m_sqlite_create_info(sqlite3 *db)
 
 int m_sqlite_drop_word(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "drop table if exists %s;";
@@ -110,7 +111,7 @@ int m_sqlite_drop_word(sqlite3 *db)
 
 int m_sqlite_drop_info(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "drop table if exists %s;";
@@ -127,7 +128,7 @@ int m_sqlite_drop_info(sqlite3 *db)
 
 int m_sqlite_init(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     m_sqlite_create_word(db);
     m_sqlite_create_info(db);
     return m_sqlite_begin(db);
@@ -135,14 +136,14 @@ int m_sqlite_init(sqlite3 *db)
 
 int m_sqlite_done(sqlite3 *db)
 {
-    AASSERT(db);
+    assert(db);
     return m_sqlite_commit(db);
 }
 
 int m_sqlite_out_word(sqlite3 *db, m_word_s *out)
 {
-    AASSERT(db);
-    AASSERT(out);
+    assert(db);
+    assert(out);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "select * from %s;";
@@ -169,8 +170,8 @@ int m_sqlite_out_word(sqlite3 *db, m_word_s *out)
 
 int m_sqlite_out_info(sqlite3 *db, m_info_s *out)
 {
-    AASSERT(db);
-    AASSERT(out);
+    assert(db);
+    assert(out);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "select * from %s order by %s asc;";
@@ -208,8 +209,8 @@ int m_sqlite_out_info(sqlite3 *db, m_info_s *out)
 
 int m_sqlite_add_word(sqlite3 *db, const m_word_s *in)
 {
-    AASSERT(db);
-    AASSERT(in);
+    assert(db);
+    assert(in);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "insert into %s values(?);";
@@ -222,7 +223,7 @@ int m_sqlite_add_word(sqlite3 *db, const m_word_s *in)
 
     for (size_t i = 0; i != a_vec_len(in); ++i)
     {
-        const a_str_s *s = A_VEC_PTR(in, i);
+        const a_str_s *s = m_word_at(in, i);
         if (a_str_len(s))
         {
             sqlite3_reset(stmt);
@@ -236,8 +237,8 @@ int m_sqlite_add_word(sqlite3 *db, const m_word_s *in)
 
 int m_sqlite_add_info(sqlite3 *db, const m_info_s *in)
 {
-    AASSERT(db);
-    AASSERT(in);
+    assert(db);
+    assert(in);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "insert into %s values(?,?,?,?,?);";
@@ -250,7 +251,7 @@ int m_sqlite_add_info(sqlite3 *db, const m_info_s *in)
 
     for (size_t i = 0; i != a_vec_len(in); ++i)
     {
-        const m_key_s *key = A_VEC_PTR(in, i);
+        const m_key_s *key = m_info_at(in, i);
         if (m_key_text(key))
         {
             sqlite3_reset(stmt);
@@ -281,8 +282,8 @@ int m_sqlite_add_info(sqlite3 *db, const m_info_s *in)
 
 int m_sqlite_del_word(sqlite3 *db, const m_word_s *in)
 {
-    AASSERT(db);
-    AASSERT(in);
+    assert(db);
+    assert(in);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "delete from %s where %s = ?;";
@@ -295,7 +296,7 @@ int m_sqlite_del_word(sqlite3 *db, const m_word_s *in)
 
     for (size_t i = 0; i != a_vec_len(in); ++i)
     {
-        const a_str_s *s = A_VEC_PTR(in, i);
+        const a_str_s *s = m_word_at(in, i);
         if (a_str_len(s))
         {
             sqlite3_reset(stmt);
@@ -309,8 +310,8 @@ int m_sqlite_del_word(sqlite3 *db, const m_word_s *in)
 
 int m_sqlite_del_info(sqlite3 *db, const m_info_s *in)
 {
-    AASSERT(db);
-    AASSERT(in);
+    assert(db);
+    assert(in);
     sqlite3_stmt *stmt = 0;
 
     state->sql = "delete from %s where %s = ?;";
@@ -323,7 +324,7 @@ int m_sqlite_del_info(sqlite3 *db, const m_info_s *in)
 
     for (size_t i = 0; i != a_vec_len(in); ++i)
     {
-        const m_key_s *key = A_VEC_PTR(in, i);
+        const m_key_s *key = m_info_at(in, i);
         if (m_key_text(key))
         {
             sqlite3_reset(stmt);

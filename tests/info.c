@@ -27,7 +27,7 @@ static void test(size_t n)
         m_key_set_blob(key, buf);
     }
 
-    m_info_delete(ctx);
+    m_info_die(ctx);
 }
 
 int main(void)

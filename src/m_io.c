@@ -6,9 +6,11 @@
 
 #include "m_io.h"
 
+#include <assert.h>
+
 long m_io_fsize(FILE *handle)
 {
-    AASSERT(handle);
+    assert(handle);
     long ret = 0;
     long seek = ftell(handle);
     if (seek < 0)
@@ -33,7 +35,7 @@ long m_io_fsize(FILE *handle)
 
 long m_io_size(const char *fname)
 {
-    AASSERT(fname);
+    assert(fname);
     FILE *handle = fopen(fname, "rb");
     if (handle == 0)
     {
@@ -46,8 +48,8 @@ long m_io_size(const char *fname)
 
 int m_io_fread(FILE *handle, void **pdata, size_t *nbyte)
 {
-    AASSERT(pdata);
-    AASSERT(nbyte);
+    assert(pdata);
+    assert(nbyte);
     long size = m_io_fsize(handle);
     if (size < 0)
     {
@@ -64,7 +66,7 @@ int m_io_fread(FILE *handle, void **pdata, size_t *nbyte)
 
 int m_io_read(const char *fname, void **pdata, size_t *nbyte)
 {
-    AASSERT(fname);
+    assert(fname);
     int ret = ~0;
     FILE *handle = fopen(fname, "rb");
     if (handle)
@@ -77,8 +79,8 @@ int m_io_read(const char *fname, void **pdata, size_t *nbyte)
 
 int m_io_fwrite(FILE *handle, const void *pdata, size_t nbyte)
 {
-    AASSERT(handle);
-    AASSERT(!nbyte || pdata);
+    assert(handle);
+    assert(!nbyte || pdata);
     if (fwrite(pdata, 1, nbyte, handle) == nbyte)
     {
         return 0;
@@ -88,7 +90,7 @@ int m_io_fwrite(FILE *handle, const void *pdata, size_t nbyte)
 
 int m_io_write(const char *fname, const void *pdata, size_t nbyte)
 {
-    AASSERT(fname);
+    assert(fname);
     int ret = ~0;
     FILE *handle = fopen(fname, "wb");
     if (handle)

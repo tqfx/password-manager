@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __M_KEY_H__
 #define __M_KEY_H__
 
@@ -37,7 +37,7 @@ typedef struct m_key_s
 __BEGIN_DECLS
 
 m_key_s *m_key_new(void);
-void m_key_delete(m_key_s *ctx);
+void m_key_die(m_key_s *ctx);
 
 void m_key_ctor(m_key_s *ctx) __NONNULL_ALL;
 void m_key_dtor(m_key_s *ctx) __NONNULL_ALL;
@@ -53,5 +53,4 @@ void m_key_move(m_key_s *ctx, m_key_s *in) __NONNULL_ALL;
 
 __END_DECLS
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __M_KEY_H__ */

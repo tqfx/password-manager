@@ -9,6 +9,7 @@
 #include "a_convert.h"
 #include "a_hmac.h"
 
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -22,8 +23,8 @@ static char *hmac(const void *key, size_t keysiz,
                   const void *msg, size_t msgsiz,
                   void *out)
 {
-    AASSERT(!keysiz || key);
-    AASSERT(!msgsiz || msg);
+    assert(!keysiz || key);
+    assert(!msgsiz || msg);
 
     a_hmac_s ctx[1];
 
@@ -36,9 +37,9 @@ static char *hmac(const void *key, size_t keysiz,
 
 int m_generate1(const m_key_s *key, const char *word, char **out)
 {
-    AASSERT(out);
-    AASSERT(key);
-    AASSERT(word);
+    assert(out);
+    assert(key);
+    assert(word);
 
     if ((key->type == M_KEY_CUSTOM) && (key->blob == 0))
     {
@@ -186,9 +187,9 @@ void m_generate_setrule(const void *s0, const void *s1, const void *s2, const vo
 
 int m_generate2(const m_key_s *key, const char *word, char **out)
 {
-    AASSERT(out);
-    AASSERT(key);
-    AASSERT(word);
+    assert(out);
+    assert(key);
+    assert(word);
 
     if ((key->type == M_KEY_CUSTOM) && (key->blob == 0))
     {

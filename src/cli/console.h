@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
@@ -50,5 +50,4 @@ int console_aprintln(const char *sep, unsigned int n,
 #pragma warning(pop)
 #endif /* _MSC_VER */
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __CONSOLE_H__ */

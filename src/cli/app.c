@@ -9,6 +9,8 @@
 #include "m_generate.h"
 #include "clipboard.h"
 
+#include <assert.h>
+
 #define TEXT_RED       CONSOLE_TEXT_RED
 #define TEXT_GREEN     CONSOLE_TEXT_GREEN
 #define TEXT_TURQUOISE CONSOLE_TEXT_TURQUOISE
@@ -62,8 +64,8 @@ void app_log(unsigned int n, ...)
 
 int app_exec(const m_key_s *key, const char *word)
 {
-    AASSERT(key);
-    AASSERT(word);
+    assert(key);
+    assert(word);
     if ((key->type == M_KEY_CUSTOM) && (key->blob == 0))
     {
         app_log(2, TEXT_RED, s_missing, TEXT_TURQUOISE, "blob");
@@ -133,7 +135,7 @@ static struct
 
 int app_init(const char *fname)
 {
-    AASSERT(fname);
+    assert(fname);
     if (STATUS_IS_SET(state->status, STATUS_INIT))
     {
         return ~0;
@@ -201,7 +203,7 @@ void app_show_word(const void *word)
     const char *s = word ? (const char *)word : "";
     for (size_t i = 0; i != a_vec_len(state->word); ++i)
     {
-        a_str_s *str = A_VEC_PTR(state->word, i);
+        a_str_s *str = m_word_at(state->word, i);
         if (a_str_len(str) && strstr(a_str_val(str), s))
         {
             app_print_word(i, a_str_val(str));
@@ -215,7 +217,7 @@ void app_show_info(const void *key)
     const char *s = key ? (const char *)key : "";
     for (size_t i = 0; i != a_vec_len(state->info); ++i)
     {
-        m_key_s *p = A_VEC_PTR(state->info, i);
+        m_key_s *p = m_info_at(state->info, i);
         if (m_key_text(p) && strstr(m_key_text(p), s))
         {
             app_print_key(i, p);
@@ -225,7 +227,7 @@ void app_show_info(const void *key)
 
 void app_show_word_idx(const m_word_s *word)
 {
-    AASSERT(word);
+    assert(word);
     if (a_vec_len(word))
     {
         printf("   I P\n");
@@ -233,7 +235,7 @@ void app_show_word_idx(const m_word_s *word)
     for (size_t i = 0; i != a_vec_len(word); ++i)
     {
         unsigned int idx;
-        a_str_s *str = A_VEC_PTR(word, i);
+        a_str_s *str = m_word_at(word, i);
         sscanf(a_str_val(str), "%u", &idx);
         if (idx < a_vec_len(word))
         {
@@ -244,7 +246,7 @@ void app_show_word_idx(const m_word_s *word)
 
 void app_show_info_idx(const m_info_s *info)
 {
-    AASSERT(info);
+    assert(info);
     if (a_vec_len(info))
     {
         printf("   I  L T K\n");
@@ -252,7 +254,7 @@ void app_show_info_idx(const m_info_s *info)
     for (size_t i = 0; i != a_vec_len(info); ++i)
     {
         unsigned int idx;
-        m_key_s *key = A_VEC_PTR(info, i);
+        m_key_s *key = m_info_at(info, i);
         sscanf(m_key_text(key), "%u", &idx);
         if (idx < a_vec_len(info))
         {
@@ -263,11 +265,11 @@ void app_show_info_idx(const m_info_s *info)
 
 int app_add_word(const m_word_s *word)
 {
-    AASSERT(word);
+    assert(word);
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(word); ++i)
     {
-        a_str_s *str = A_VEC_PTR(word, i);
+        a_str_s *str = m_word_at(word, i);
         if ((a_str_len(str) == 0) || (strlen(a_str_val(str)) == 0))
         {
             app_log3(state->fname, TEXT_RED, s_missing, "p");
@@ -289,11 +291,11 @@ int app_add_word(const m_word_s *word)
 
 int app_add_info(const m_info_s *info)
 {
-    AASSERT(info);
+    assert(info);
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(info); ++i)
     {
-        m_key_s *key = A_VEC_PTR(info, i);
+        m_key_s *key = m_info_at(info, i);
         if ((m_key_type(key) == M_KEY_CUSTOM) && (m_key_blob(key) == 0))
         {
             app_log3(state->fname, TEXT_RED, s_missing, "blob");
@@ -320,11 +322,11 @@ int app_add_info(const m_info_s *info)
 
 int app_del_word(const m_word_s *word)
 {
-    AASSERT(word);
+    assert(word);
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(word); ++i)
     {
-        a_str_s *str = A_VEC_PTR(word, i);
+        a_str_s *str = m_word_at(word, i);
         ret = m_word_del(state->word, str);
         if (ret == 0)
         {
@@ -341,11 +343,11 @@ int app_del_word(const m_word_s *word)
 
 int app_del_info(const m_info_s *info)
 {
-    AASSERT(info);
+    assert(info);
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(info); ++i)
     {
-        m_key_s *key = A_VEC_PTR(info, i);
+        m_key_s *key = m_info_at(info, i);
         ret = m_info_del(state->info, key);
         if (ret == 0)
         {
@@ -362,19 +364,19 @@ int app_del_info(const m_info_s *info)
 
 int app_del_word_idx(const m_word_s *word)
 {
-    AASSERT(word);
+    assert(word);
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(word); ++i)
     {
         unsigned int x = 0;
-        a_str_s *str = A_VEC_PTR(word, i);
+        a_str_s *str = m_word_at(word, i);
         sscanf(a_str_val(str), "%u", &x);
-        if (x < a_vec_len(state->word) && a_str_len(A_VEC_PTR(state->word, x)))
+        if (x < a_vec_len(state->word) &&
+            (str = m_word_at(state->word, x), a_str_len(str)))
         {
             STATUS_SET(state->status, STATUS_MODP);
-            a_str_s *p = A_VEC_PTR(state->word, x);
-            app_print_word(x, a_str_val(p));
-            a_str_dtor(p);
+            app_print_word(x, a_str_val(str));
+            a_str_dtor(str);
             ret = 0;
         }
     }
@@ -383,19 +385,19 @@ int app_del_word_idx(const m_word_s *word)
 
 int app_del_info_idx(const m_info_s *info)
 {
-    AASSERT(info);
+    assert(info);
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(info); ++i)
     {
         unsigned int x = 0;
-        m_key_s *key = A_VEC_PTR(info, i);
+        m_key_s *key = m_info_at(info, i);
         sscanf(m_key_text(key), "%u", &x);
-        if (x < a_vec_len(state->info) && m_key_text(A_VEC_PTR(state->info, x)))
+        if (x < a_vec_len(state->info) &&
+            (key = m_info_at(state->info, x), m_key_text(key)))
         {
             STATUS_SET(state->status, STATUS_MODK);
-            m_key_s *p = A_VEC_PTR(state->info, x);
-            app_print_key(x, p);
-            m_key_dtor(p);
+            app_print_key(x, key);
+            m_key_dtor(key);
             ret = 0;
         }
     }
@@ -431,14 +433,16 @@ int app_generate_idx(unsigned int word, unsigned int key)
     if (word)
     {
         a_str_s str[1];
-        a_str_move(str, A_VEC_PTR(state->word, word));
-        a_str_move(A_VEC_PTR(state->word, word), A_VEC_PTR(state->word, 0));
-        a_str_move(A_VEC_PTR(state->word, 0), str);
+        a_str_s *ptr = m_word_ptr(state->word);
+        a_str_move(str, ptr + word);
+        a_str_move(ptr + word, ptr);
+        a_str_move(ptr, str);
         STATUS_SET(state->status, STATUS_MODP);
     }
 
-    a_str_s *str = A_VEC_PTR(state->word, 0);
-    ret = app_exec(A_VEC_PTR(state->info, key), a_str_val(str));
+    a_str_s *str = m_word_ptr(state->word);
+    m_key_s *ptr = m_info_ptr(state->info);
+    ret = app_exec(ptr + key, a_str_val(str));
 
 label_exit:
     return ret;
@@ -446,11 +450,11 @@ label_exit:
 
 int app_generate_key(const m_key_s *key)
 {
-    AASSERT(key);
+    assert(key);
     int ret = ~0;
     if (a_vec_len(state->word))
     {
-        ret = app_exec(key, a_str_val(A_VEC_PTR(state->word, 0)));
+        ret = app_exec(key, a_str_val(m_word_ptr(state->word)));
     }
     else
     {
@@ -464,8 +468,8 @@ int app_generate_key(const m_key_s *key)
 
 static int app_import_(m_info_s *info, const char *in)
 {
-    AASSERT(in);
-    AASSERT(info);
+    assert(in);
+    assert(info);
     int ret = ~0;
     cJSON *json = 0;
     ret = m_json_load(&json, in);
@@ -488,8 +492,8 @@ static int app_import_(m_info_s *info, const char *in)
 
 static int app_export_(m_info_s *info, const char *out)
 {
-    AASSERT(out);
-    AASSERT(info);
+    assert(out);
+    assert(info);
     if (strstr(out, ".db"))
     {
         sqlite3 *db = 0;
@@ -521,8 +525,8 @@ static int app_export_(m_info_s *info, const char *out)
 
 int app_convert(const char *in, const char *out)
 {
-    AASSERT(in);
-    AASSERT(out);
+    assert(in);
+    assert(out);
     int ret = ~0;
     m_info_s *info = m_info_new();
     ret = app_import_(info, in);
@@ -536,13 +540,13 @@ int app_convert(const char *in, const char *out)
         goto label_exit;
     }
 label_exit:
-    m_info_delete(info);
+    m_info_die(info);
     return ret;
 }
 
 int app_import(const char *fname)
 {
-    AASSERT(fname);
+    assert(fname);
     m_info_s *info = m_info_new();
     int ret = app_import_(info, fname);
     if (a_vec_len(info) && ret == 0)
@@ -550,8 +554,7 @@ int app_import(const char *fname)
         STATUS_SET(state->status, STATUS_MODK);
         for (size_t i = 0; i != a_vec_len(info); ++i)
         {
-            m_key_s *key = A_VEC_PTR(info, i);
-            m_info_add(state->info, key);
+            m_info_add(state->info, m_info_at(info, i));
         }
         app_log3(state->fname, TEXT_GREEN, s_success, fname);
     }
@@ -559,12 +562,12 @@ int app_import(const char *fname)
     {
         app_log3(state->fname, TEXT_RED, s_failure, fname);
     }
-    m_info_delete(info);
+    m_info_die(info);
     return ret;
 }
 
 int app_export(const char *fname)
 {
-    AASSERT(fname);
+    assert(fname);
     return app_export_(state->info, fname);
 }

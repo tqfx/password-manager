@@ -29,7 +29,7 @@ int main(void)
     m_json_export_info(json, info);
     cJSON_Delete(json);
     m_json_import_info(&json, info);
-    m_info_delete(info);
+    m_info_die(info);
     cJSON_Delete(json);
     return 0;
 }

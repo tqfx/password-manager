@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
     m_sqlite_add_info(db, info);
     m_sqlite_commit(db);
 
-    m_word_delete(word);
-    m_info_delete(info);
+    m_word_die(word);
+    m_info_die(info);
 
     return sqlite3_close(db);
 }

@@ -17,10 +17,10 @@
 #define OPTION_CLR(stat, mask)    ((stat) &= ~(mask))
 #define OPTION_IS_SET(stat, mask) (((stat) & (mask)) == (mask))
 
-#ifndef _MSC_VER
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++-compat"
-#endif /* _MSC_VER */
+#endif /* __GNUC__ || __clang__ */
 
 #pragma pack(push, 4)
 static struct
@@ -67,7 +67,7 @@ static int main_app(char *args)
 #if defined(_WIN32)
     for (size_t i = 0; i != a_vec_len(state->info); ++i)
     {
-        m_key_s *key = A_VEC_PTR(state->info, i);
+        m_key_s *key = m_info_at(state->info, i);
         if (m_key_text(key))
         {
             char *text;
@@ -85,7 +85,7 @@ static int main_app(char *args)
             args[strlen(args) - 4] = 0;
         }
 #endif /* _WIN32 */
-        a_str_s str[1] = {A_STR_INITS()};
+        a_str_s str[1] = {A_STR_NUL};
         a_str_printf(str, "%s%s", args, ".db");
         state->file = a_str_done(str);
     }
@@ -136,12 +136,12 @@ static int main_app(char *args)
         OPTION_CLR(state->option, OPTION_SHOW);
         for (size_t i = 0; i != a_vec_len(state->word); ++i)
         {
-            a_str_s *str = A_VEC_PTR(state->word, i);
+            a_str_s *str = m_word_at(state->word, i);
             app_show_word(a_str_val(str));
         }
         for (size_t i = 0; i != a_vec_len(state->info); ++i)
         {
-            m_key_s *key = A_VEC_PTR(state->info, i);
+            m_key_s *key = m_info_at(state->info, i);
             app_show_info(m_key_text(key));
         }
     }
@@ -152,11 +152,11 @@ static int main_app(char *args)
         OPTION_CLR(state->option, OPTION_INDEX);
         for (size_t i = 0; i != a_vec_len(state->info); ++i)
         {
-            m_key_s *key = A_VEC_PTR(state->info, i);
+            m_key_s *key = m_info_at(state->info, i);
             sscanf(m_key_text(key), "%u", &ik);
             if (a_vec_len(state->word))
             {
-                a_str_s *str = A_VEC_PTR(state->word, a_vec_len(state->word) - 1);
+                a_str_s *str = m_word_at(state->word, a_vec_len(state->word) - 1);
                 sscanf(a_str_val(str), "%u", &ip);
             }
             app_generate_idx(ip, ik);
@@ -166,10 +166,10 @@ static int main_app(char *args)
     {
         for (size_t i = 0; i != a_vec_len(state->info); ++i)
         {
-            m_key_s *key = A_VEC_PTR(state->info, i);
+            m_key_s *key = m_info_at(state->info, i);
             if (a_vec_len(state->word))
             {
-                a_str_s *str = A_VEC_PTR(state->word, a_vec_len(state->word) - 1);
+                a_str_s *str = m_word_at(state->word, a_vec_len(state->word) - 1);
                 app_exec(key, a_str_val(str));
             }
             else
@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 
     while ((opt = getopt_long(argc, argv, shortopts, longopts, &optind), opt) != -1)
     {
-        a_str_s ctx[1] = {A_STR_INITS()};
+        a_str_s ctx[1] = {A_STR_NUL};
         switch (opt)
         {
         case 'h':
@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 
     if (a_vec_len(state->info))
     {
-        m_key_s *key = A_VEC_PTR(state->info, a_vec_len(state->info) - 1);
+        m_key_s *key = m_info_at(state->info, a_vec_len(state->info) - 1);
         m_key_set_size(key, m_key_size(state->key));
         m_key_set_type(key, m_key_type(state->key));
         if (m_key_blob(state->key))
@@ -381,6 +381,6 @@ int main(int argc, char *argv[])
     return opt;
 }
 
-#ifndef _MSC_VER
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
-#endif /* _MSC_VER */
+#endif /* __GNUC__ || __clang__ */

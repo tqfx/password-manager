@@ -7,50 +7,22 @@
 #include "m_info.h"
 #include "a_object.h"
 
+#include <assert.h>
 #include <string.h>
 
-A_OBJECT_CREATE(m_info_s, m_info_new, m_info_ctor)
-A_OBJECT_DELETE(m_info_s, m_info_delete, m_info_dtor)
-
-__STATIC_INLINE
-void *m_info_virtual_address(void *obj, size_t index)
-{
-    m_info_s *ctx = (m_info_s *)obj;
-    return ctx->ptr + index;
-}
-
-__STATIC_INLINE
-int m_info_virtual_realloc(void *obj, size_t capacity)
-{
-    m_info_s *ctx = (m_info_s *)obj;
-    m_key_s *ptr = (m_key_s *)realloc(ctx->ptr, sizeof(m_key_s) * capacity);
-    return ptr ? (ctx->ptr = ptr, 0) : ~0;
-}
+A_OBJECT_NEW(m_info_s, m_info_new, m_info_ctor)
+A_OBJECT_DIE(m_info_s, m_info_die, m_info_dtor)
 
 void m_info_ctor(m_info_s *ctx)
 {
-    AASSERT(ctx);
-    static const a_vec_vtbl_s vtbl = {
-        m_info_virtual_address,
-        m_info_virtual_realloc,
-    };
-    a_vec_ctor(ctx->vec);
-    ctx->vec->vptr = &vtbl;
-    ctx->ptr = 0;
+    assert(ctx);
+    a_vec_ctor(ctx, sizeof(m_key_s));
 }
 
 void m_info_dtor(m_info_s *ctx)
 {
-    AASSERT(ctx);
-    while (a_vec_len(ctx->vec))
-    {
-        size_t index = a_vec_dec(ctx->vec);
-        m_key_s *key = (m_key_s *)a_vec_ptr(ctx, index);
-        m_key_dtor(key);
-    }
-    a_vec_dtor(ctx->vec);
-    free(ctx->ptr);
-    ctx->ptr = 0;
+    assert(ctx);
+    a_vec_dtor(ctx, (void (*)(void *))m_key_dtor);
 }
 
 m_key_s *m_info_push(m_info_s *ctx)
@@ -73,7 +45,7 @@ int m_info_add(m_info_s *ctx, m_key_s *key)
     m_key_s *p = 0;
     for (size_t i = 0; i != a_vec_len(ctx); ++i)
     {
-        p = A_VEC_PTR(ctx, i);
+        p = m_info_at(ctx, i);
         if (m_key_text(p) && strcmp(m_key_text(p), m_key_text(key)) == 0)
         {
             m_key_dtor(p);
@@ -97,7 +69,7 @@ int m_info_del(m_info_s *ctx, m_key_s *key)
     int ret = ~0;
     for (size_t i = 0; i != a_vec_len(ctx); ++i)
     {
-        m_key_s *p = A_VEC_PTR(ctx, i);
+        m_key_s *p = m_info_at(ctx, i);
         if (m_key_text(p) && strcmp(m_key_text(p), m_key_text(key)) == 0)
         {
             m_key_dtor(p);

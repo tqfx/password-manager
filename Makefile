@@ -2,7 +2,7 @@ MAKEFLAGS += --silent
 
 SOURCE_CLANG += include src
 SOURCE_CLANG += src/cli
-SOURCE_CLANG += test
+SOURCE_CLANG += tests
 
 all: format
 

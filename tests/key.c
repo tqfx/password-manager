@@ -27,6 +27,6 @@ int main(void)
     printf("type: %u\n", m_key_type(ctx));
     printf("size: %u\n", m_key_size(ctx));
 
-    m_key_delete(ctx);
+    m_key_die(ctx);
     return 0;
 }

@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __APP_H__
 #define __APP_H__
 
@@ -46,5 +46,4 @@ static const char s_failure[] = "failure";
 static const char s_success[] = "success";
 static const char s_warning[] = "warning";
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __APP_H__ */

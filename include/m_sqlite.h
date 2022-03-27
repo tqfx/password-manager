@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __M_SQLITE_H__
 #define __M_SQLITE_H__
 
@@ -32,7 +32,4 @@ int m_sqlite_del_info(sqlite3 *db, const m_info_s *in) __NONNULL_ALL;
 
 __END_DECLS
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __M_SQLITE_H__ */
-
-/* END OF FILE */

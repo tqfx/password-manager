@@ -18,15 +18,23 @@ jobs:
           submodules: true
       - uses: vmactions/freebsd-vm@v0.1.6
         env:
+          CC: clang
+          CXX: clang++
           VCPKG_INSTALLATION_ROOT: ~/vcpkg
         with:
           copyback: true
           prepare: |
-            pkg install -y binutils cmake gmake gcc
-            pkg install -y ninja zip unzip curl git pkgconf
-          envs: VCPKG_INSTALLATION_ROOT
+            pkg install -y git
+            pkg install -y zip
+            pkg install -y curl
+            pkg install -y unzip
+            pkg install -y cmake
+            pkg install -y gmake
+            pkg install -y ninja
+            pkg install -y pkgconf
+          envs: 'CC CXX VCPKG_INSTALLATION_ROOT'
           run: |
-            git clone https://github.com/Microsoft/vcpkg.git $VCPKG_INSTALLATION_ROOT --depth 1
+            git clone https://github.com/Microsoft/vcpkg.git $VCPKG_INSTALLATION_ROOT --single-branch --branch 2021.12.31
             $VCPKG_INSTALLATION_ROOT/bootstrap-vcpkg.sh -disableMetrics
             cmake --preset=${{ matrix.preset }} -DBUILD_TESTING=ON
             cmake --build --preset=${{ matrix.preset }} --target ${{ matrix.target }} --parallel

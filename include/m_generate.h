@@ -4,7 +4,7 @@
  @copyright Copyright (C) 2020 tqfx. All rights reserved.
 */
 
-/* Define to prevent recursive inclusion */
+#pragma once
 #ifndef __M_GENERATE_H__
 #define __M_GENERATE_H__
 
@@ -28,5 +28,4 @@ int m_generate(const m_key_s *key, const char *word, char **out)
     return m_generate1(key, word, out);
 }
 
-/* Enddef to prevent recursive inclusion */
 #endif /* __M_GENERATE_H__ */
