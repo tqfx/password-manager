@@ -8,13 +8,15 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#if defined(_WIN32)
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 5105)
 #endif /* _MSC_VER */
-
-#if defined(_WIN32)
 #include <windows.h>
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif /* _MSC_VER */
 #endif /* _WIN32 */
 
 static struct

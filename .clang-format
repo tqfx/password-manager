@@ -3,13 +3,6 @@ BasedOnStyle: LLVM
 AccessModifierOffset: -4
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: Left
-AlignOperands: AlignAfterOperator
-AllowAllArgumentsOnNextLine: false
-AllowAllConstructorInitializersOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
-AllowShortLambdasOnASingleLine: None
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
 BreakInheritanceList: BeforeComma
@@ -25,9 +18,6 @@ BraceWrapping:
   AfterControlStatement: true
   BeforeElse: true
   BeforeCatch: true
-  SplitEmptyRecord: false
-  SplitEmptyFunction: false
-  SplitEmptyNamespace: false
 ColumnLimit: 0
 IndentWidth: 4
 KeepEmptyLinesAtTheStartOfBlocks: false

@@ -263,14 +263,14 @@ int m_sqlite_add_info(sqlite3 *db, const m_info_s *in)
             }
             {
                 int size = ((m_key_type(key) == M_KEY_CUSTOM) && m_key_blob(key))
-                             ? (int)strlen(m_key_blob(key))
-                             : 0;
+                               ? (int)strlen(m_key_blob(key))
+                               : 0;
                 sqlite3_bind_text(stmt, 4, m_key_blob(key), size, SQLITE_STATIC);
             }
             {
                 int size = m_key_url(key)
-                             ? (int)strlen(m_key_url(key))
-                             : 0;
+                               ? (int)strlen(m_key_url(key))
+                               : 0;
                 sqlite3_bind_text(stmt, 5, m_key_url(key), size, SQLITE_STATIC);
             }
             sqlite3_step(stmt);

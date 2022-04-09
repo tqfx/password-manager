@@ -21,11 +21,6 @@
 #define CONSOLE_TEXT_WHITE     7
 #define CONSOLE_TEXT_DEFAULT   CONSOLE_TEXT_WHITE
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 5105)
-#endif /* _MSC_VER */
-
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus */
@@ -45,9 +40,5 @@ int console_aprintln(const char *sep, unsigned int n,
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus */
-
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif /* _MSC_VER */
 
 #endif /* __CONSOLE_H__ */

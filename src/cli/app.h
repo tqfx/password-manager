@@ -35,10 +35,6 @@ int app_convert(const char *in, const char *out) __NONNULL_ALL;
 int app_import(const char *fname) __NONNULL_ALL;
 int app_export(const char *fname) __NONNULL_ALL;
 
-#if defined(_WIN32)
-int app_windows_check(void);
-#endif /* _WIN32 */
-
 __BEGIN_DECLS
 
 static const char s_missing[] = "missing";

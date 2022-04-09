@@ -10,11 +10,6 @@
 
 #include <stdlib.h>
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 5105)
-#endif /* _MSC_VER */
-
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus */
@@ -85,9 +80,5 @@ int gbk_utf8(char **out, const void *in);
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus */
-
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif /* _MSC_VER */
 
 #endif /* __CONVERT_H__ */

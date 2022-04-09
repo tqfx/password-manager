@@ -29,7 +29,7 @@ static char *hmac(const void *key, size_t keysiz,
     a_hmac_s ctx[1];
 
     a_hmac_init(ctx, &a_hash_md5, key, keysiz);
-    a_hmac_process(ctx, msg, msgsiz);
+    a_hmac_proc(ctx, msg, msgsiz);
     a_hmac_done(ctx, ctx->buf);
 
     return (char *)a_digest_lower(ctx->buf, ctx->outsiz, out);

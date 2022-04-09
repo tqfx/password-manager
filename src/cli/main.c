@@ -6,6 +6,8 @@
 
 #include "app.h"
 
+#include "path.h"
+
 #include <getopt.h>
 
 #define OPTION_ADD   (1 << 0)
@@ -42,7 +44,7 @@ static struct
 };
 #pragma pack(pop)
 
-static void main_help(const char *args)
+static void main_help(void)
 {
     static const char help[] = "option: --import > -d[i] > -a > -s[i] > -i\n\
   -a --add       option for add\n\
@@ -59,10 +61,12 @@ static void main_help(const char *args)
      --import    filename\n\
      --export    filename\n\
 Copyright (C) 2020 tqfx. All rights reserved.";
-    printf("%s\n%s\n", args, help);
+    char *self = path_self();
+    printf("%s\n%s\n", self, help);
+    free(self);
 }
 
-static int main_app(char *args)
+static int main_app(void)
 {
 #if defined(_WIN32)
     for (size_t i = 0; i != a_vec_len(state->info); ++i)
@@ -77,17 +81,20 @@ static int main_app(char *args)
         }
     }
 #endif /* _WIN32 */
+
     if (state->file == 0)
     {
+        char *exe = path_self();
 #if defined(_WIN32)
-        if (strstr(args, ".exe"))
+        if (strstr(exe, ".exe"))
         {
-            args[strlen(args) - 4] = 0;
+            exe[strlen(exe) - 4] = 0;
         }
 #endif /* _WIN32 */
         a_str_s str[1] = {A_STR_NUL};
-        a_str_printf(str, "%s%s", args, ".db");
+        a_str_printf(str, "%s%s", exe, ".db");
         state->file = a_str_done(str);
+        free(exe);
     }
 
     app_init(state->file);
@@ -180,7 +187,7 @@ static int main_app(char *args)
     }
     else
     {
-        main_help(args);
+        main_help();
     }
 
     return app_done();
@@ -216,7 +223,7 @@ int main(int argc, char *argv[])
 
     if (argc < 2)
     {
-        main_help(*argv);
+        main_help();
         exit(EXIT_SUCCESS);
     }
 
@@ -234,7 +241,7 @@ int main(int argc, char *argv[])
         {
         case 'h':
         {
-            main_help(*argv);
+            main_help();
             exit(EXIT_SUCCESS);
         }
         break;
@@ -363,7 +370,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    opt = main_app(*argv);
+    opt = main_app();
 
     /* done */
     {
