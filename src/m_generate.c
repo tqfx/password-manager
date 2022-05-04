@@ -13,11 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 
-__STATIC_INLINE
-int xdigit(int x)
-{
-    return a_xdigit(x);
-}
+A_INLINE int xdigit(int x) { return a_xdigit(x); }
 
 static char *hmac(const void *key, size_t keysiz,
                   const void *msg, size_t msgsiz,

@@ -13,16 +13,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-__BEGIN_DECLS
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
 
-long m_io_fsize(FILE *handle) __NONNULL_ALL;
-int m_io_fread(FILE *handle, void **pdata, size_t *nbyte) __NONNULL((1));
-int m_io_fwrite(FILE *handle, const void *pdata, size_t nbyte) __NONNULL((1));
+long m_io_fsize(FILE *handle);
+int m_io_fread(FILE *handle, void **pdata, size_t *nbyte);
+int m_io_fwrite(FILE *handle, const void *pdata, size_t nbyte);
 
-long m_io_size(const char *fname) __NONNULL_ALL;
-int m_io_read(const char *fname, void **pdata, size_t *nbyte) __NONNULL((1));
-int m_io_write(const char *fname, const void *pdata, size_t nbyte) __NONNULL((1));
+long m_io_size(const char *fname);
+int m_io_read(const char *fname, void **pdata, size_t *nbyte);
+int m_io_write(const char *fname, const void *pdata, size_t nbyte);
 
-__END_DECLS
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
 #endif /* __M_IO__ */

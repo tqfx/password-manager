@@ -12,18 +12,20 @@
 
 #include <stdlib.h>
 
-__BEGIN_DECLS
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
 
 void m_generate_setrule(const void *s0, const void *s1, const void *s2, const void *s3);
 
-int m_generate1(const m_key_s *key, const char *word, char **out) __NONNULL_ALL;
-int m_generate2(const m_key_s *key, const char *word, char **out) __NONNULL_ALL;
+int m_generate1(const m_key_s *key, const char *word, char **out);
+int m_generate2(const m_key_s *key, const char *word, char **out);
 
-__END_DECLS
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
-__NONNULL_ALL
-__STATIC_INLINE
-int m_generate(const m_key_s *key, const char *word, char **out)
+A_INLINE int m_generate(const m_key_s *key, const char *word, char **out)
 {
     return m_generate1(key, word, out);
 }

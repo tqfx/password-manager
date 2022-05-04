@@ -193,11 +193,7 @@ static int main_app(void)
     return app_done();
 }
 
-__STATIC_INLINE
-char *text_optarg(char *arg)
-{
-    return (*arg != '*') ? arg : (arg + 1);
-}
+A_INLINE char *text_optarg(char *arg) { return (*arg != '*') ? arg : (arg + 1); }
 
 int main(int argc, char *argv[])
 {

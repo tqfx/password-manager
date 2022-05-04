@@ -34,23 +34,27 @@ typedef struct m_key_s
 #define m_key_type(ctx) (ctx)->type
 #define m_key_size(ctx) (ctx)->size
 
-__BEGIN_DECLS
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
 
 m_key_s *m_key_new(void);
 void m_key_die(m_key_s *ctx);
 
-void m_key_ctor(m_key_s *ctx) __NONNULL_ALL;
-void m_key_dtor(m_key_s *ctx) __NONNULL_ALL;
+void m_key_ctor(m_key_s *ctx);
+void m_key_dtor(m_key_s *ctx);
 
-int m_key_set_url(m_key_s *ctx, const void *url) __NONNULL((1));
-int m_key_set_blob(m_key_s *ctx, const void *blob) __NONNULL((1));
-int m_key_set_text(m_key_s *ctx, const void *text) __NONNULL((1));
-void m_key_set_type(m_key_s *ctx, unsigned int type) __NONNULL((1));
-void m_key_set_size(m_key_s *ctx, unsigned int size) __NONNULL((1));
+int m_key_set_url(m_key_s *ctx, const void *url);
+int m_key_set_blob(m_key_s *ctx, const void *blob);
+int m_key_set_text(m_key_s *ctx, const void *text);
+void m_key_set_type(m_key_s *ctx, unsigned int type);
+void m_key_set_size(m_key_s *ctx, unsigned int size);
 
-int m_key_copy(m_key_s *ctx, const m_key_s *in) __NONNULL_ALL;
-void m_key_move(m_key_s *ctx, m_key_s *in) __NONNULL_ALL;
+int m_key_copy(m_key_s *ctx, const m_key_s *in);
+void m_key_move(m_key_s *ctx, m_key_s *in);
 
-__END_DECLS
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
 #endif /* __M_KEY_H__ */

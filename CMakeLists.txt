@@ -113,18 +113,24 @@ find_package(cJSON CONFIG REQUIRED)
 unset(SOURCE)
 aux_source_directory(src SOURCE)
 add_library(${PROJECT_NAME} ${SOURCE})
-target_link_libraries(${PROJECT_NAME} a
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}/src
+  )
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  a::a
   unofficial::sqlite3::sqlite3
   cjson
   )
 if(MINGW)
-  target_link_options(${PROJECT_NAME} INTERFACE
+  target_link_options(${PROJECT_NAME} PUBLIC
     -fstack-protector-strong
+    -static-libgcc
+    -static-libstdc++
+    -Wl,-Bstatic,--whole-archive
+    -lwinpthread
+    -Wl,--no-whole-archive
     )
 endif()
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/src
-  )
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -193,25 +199,13 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_MACRO_EXPANSION YES)
   set(DOXYGEN_EXPAND_ONLY_PREDEF YES)
   set(DOXYGEN_PREDEFINED
-    "__cplusplus"
-    "__BEGIN_DECLS:="
-    "__END_DECLS:="
-    "__NONNULL():="
-    "__NONNULL_ALL:="
-    "__RESULT_USE_CHECK:="
-    "__ALWAYS_INLINE:="
-    "__WEAK:="
-    "__USED:="
-    "__UNUSED:="
-    "__ALIGNED():="
-    "__PACKED:="
-    "__PACKED_STRUCT:="
-    "__PACKED_UNION:="
-    "__ASM:="
-    "__INLINE:="
-    "__RESTRICT:="
-    "__STATIC_INLINE:="
-    "__ATTR_PRINTF():="
+    "__STDC_VERSION__=201112L"
+    "__cplusplus=201703L"
+    "A_RESTRICT:=restrict"
+    "A_INLINE:=static inline"
+    "A_PUBLIC:="
+    "A_HIDDEN:="
+    "A_ASM:=asm"
     )
   # Configuration options related to external references
   # Configuration options related to the dot tool

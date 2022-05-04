@@ -12,12 +12,16 @@
 
 #include "cjson/cJSON.h"
 
-__BEGIN_DECLS
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
 
-int m_json_load(cJSON **out, const char *in) __NONNULL_ALL;
-int m_json_export_info(const cJSON *in, m_info_s *out) __NONNULL_ALL;
-int m_json_import_info(cJSON **out, const m_info_s *in) __NONNULL_ALL;
+int m_json_load(cJSON **out, const char *in);
+int m_json_export_info(const cJSON *in, m_info_s *out);
+int m_json_import_info(cJSON **out, const m_info_s *in);
 
-__END_DECLS
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
 #endif /* __M_JSON__ */
