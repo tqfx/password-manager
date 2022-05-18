@@ -10,7 +10,7 @@ add_library(${PROJECT_NAME} cJSON.c)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
   $<INSTALL_INTERFACE:include>
-)
+  )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES C_VISIBILITY_PRESET hidden)
 target_compile_definitions(${PROJECT_NAME} PUBLIC CJSON_EXPORT_SYMBOLS CJSON_API_VISIBILITY)

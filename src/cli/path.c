@@ -35,12 +35,11 @@ char *path_self(void)
         self = ptr;
 #if defined(_WIN32)
         length = GetModuleFileName(NULL, self, (DWORD)(size - 1));
-#endif /* _WIN32 */
-#if defined(__USE_XOPEN_EXTENDED) || defined(__USE_XOPEN2K)
+#else
         length = (size_t)readlink("/proc/self/exe", self, size - 1);
-#endif /* __USE_XOPEN_EXTENDED || __USE_XOPEN2K */
+#endif /* _WIN32 */
     } while (length >= size - 1);
-    if (length)
+    if (self)
     {
         self[length] = 0;
     }

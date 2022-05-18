@@ -26,6 +26,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif()
 include(cmake/standard.cmake)
 
+option(ENABLE_DOXYGEN "Enable doxygen" ON)
 option(ENABLE_WARNINGS "Enable warnings" OFF)
 option(ENABLE_SANITIZE "Enable sanitize" OFF)
 option(ENABLE_CPPCHECK "Enable cppcheck" OFF)
@@ -33,6 +34,9 @@ option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
 option(ENABLE_IYWU "Enable include-what-you-use" OFF)
 option(ENABLE_IPO "Enable interprocedural optimization" OFF)
 
+if(ENABLE_DOXYGEN)
+  find_package(Doxygen OPTIONAL_COMPONENTS dot mscgen dia)
+endif()
 if(ENABLE_WARNINGS)
   include(cmake/warnings.cmake)
 endif()
@@ -96,14 +100,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
   )
 target_link_libraries(${PROJECT_NAME} PUBLIC
-  a::a unofficial::sqlite3::sqlite3 cjson
+  liba::a unofficial::sqlite3::sqlite3 cjson
   )
 
 file(GLOB_RECURSE SOURCE src/cli/*.*)
 
 add_executable(cli ${SOURCE})
 set_target_properties(cli PROPERTIES OUTPUT_NAME m)
-set_target_properties(cli PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(cli PROPERTIES C_VISIBILITY_PRESET hidden)
 if(ENABLE_IYWU AND INCLUDE_WHAT_YOU_USE)
   set_target_properties(cli PROPERTIES C_INCLUDE_WHAT_YOU_USE "${INCLUDE_WHAT_YOU_USE}")
@@ -133,14 +136,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-if(CLANG_FORMAT)
-  file(GLOB_RECURSE SOURCE include/*.h src/*.[ch] tests/*.[ch]*)
-  # https://clang.llvm.org/docs/ClangFormat.html
-  add_custom_target(${PROJECT_NAME}-format
-    COMMAND ${CLANG_FORMAT} -style=file -i ${SOURCE} --verbose
-    )
-endif()
-
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/
   DESTINATION include FILES_MATCHING
   REGEX ".*\.\(h\|hh\|hxx\|hpp\)$"
@@ -156,8 +151,29 @@ install(EXPORT ${PROJECT_NAME}-targets
   DESTINATION lib/cmake/${PROJECT_NAME}
   )
 
-# https://www.doxygen.nl/manual/config.html
-find_package(Doxygen OPTIONAL_COMPONENTS dot mscgen dia)
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE.txt)
+set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.md)
+set(CPACK_SOURCE_IGNORE_FILES
+  ${CMAKE_CURRENT_LIST_DIR}/.git
+  ${CMAKE_CURRENT_LIST_DIR}/.vscode
+  ${CMAKE_CURRENT_LIST_DIR}/.github
+  ${CMAKE_CURRENT_LIST_DIR}/.gitignore
+  ${CMAKE_CURRENT_LIST_DIR}/.gitmodules
+  ${CMAKE_CURRENT_LIST_DIR}/.gitattributes
+  ${CMAKE_CURRENT_LIST_DIR}/build
+  ${CMAKE_CURRENT_LIST_DIR}/html
+  )
+set(CPACK_GENERATOR ZIP)
+include(CPack)
+
+if(CLANG_FORMAT)
+  file(GLOB_RECURSE SOURCE include/*.h src/*.[ch] tests/*.[ch]*)
+  # https://clang.llvm.org/docs/ClangFormat.html
+  add_custom_target(${PROJECT_NAME}-format
+    COMMAND ${CLANG_FORMAT} -style=file -i ${SOURCE} --verbose
+    )
+endif()
 if(DOXYGEN_FOUND)
   # Project related configuration options
   set(DOXYGEN_OPTIMIZE_OUTPUT_FOR_C YES)
@@ -202,25 +218,10 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_INTERACTIVE_SVG YES)
     set(DOXYGEN_DOT_IMAGE_FORMAT svg)
   endif()
+  # https://www.doxygen.nl/manual/config.html
   doxygen_add_docs(${PROJECT_NAME}-doc
     ${CMAKE_CURRENT_LIST_DIR}/README.md
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/src
     )
 endif()
-
-include(InstallRequiredSystemLibraries)
-set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE.txt)
-set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.md)
-set(CPACK_SOURCE_IGNORE_FILES
-  ${CMAKE_CURRENT_LIST_DIR}/.git
-  ${CMAKE_CURRENT_LIST_DIR}/.vscode
-  ${CMAKE_CURRENT_LIST_DIR}/.github
-  ${CMAKE_CURRENT_LIST_DIR}/.gitignore
-  ${CMAKE_CURRENT_LIST_DIR}/.gitmodules
-  ${CMAKE_CURRENT_LIST_DIR}/.gitattributes
-  ${CMAKE_CURRENT_LIST_DIR}/build
-  ${CMAKE_CURRENT_LIST_DIR}/html
-  )
-set(CPACK_GENERATOR ZIP)
-include(CPack)

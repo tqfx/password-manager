@@ -20,31 +20,20 @@ jobs:
         env:
           CC: clang
           CXX: clang++
-          VCPKG_INSTALLATION_ROOT: ~/vcpkg
         with:
           copyback: true
           prepare: |
-            pkg install -y git
-            pkg install -y zip
-            pkg install -y curl
-            pkg install -y unzip
-            pkg install -y cmake
-            pkg install -y gmake
-            pkg install -y ninja
-            pkg install -y pkgconf
-          envs: 'CC CXX VCPKG_INSTALLATION_ROOT'
+            pkg install -y git zip curl unzip cmake gmake ninja pkgconf
+          envs: 'CC CXX'
           run: |
-            git clone https://github.com/Microsoft/vcpkg.git $VCPKG_INSTALLATION_ROOT --single-branch --branch 2021.12.31
-            $VCPKG_INSTALLATION_ROOT/bootstrap-vcpkg.sh -disableMetrics
-            cmake -S . -B build \
+            cmake -S . -B build -G Ninja \
               -DBUILD_TESTING=ON \
               -DENABLE_WARNINGS=ON \
               -DCMAKE_INSTALL_PREFIX=install \
-              -DVCPKG_TARGET_TRIPLET=x64-freebsd \
               -DENABLE_SANITIZE=${{matrix.sanitizer}} \
               -DCMAKE_BUILD_TYPE=${{matrix.buildtype}}
             cmake --build build --target ${{matrix.target}}
-            cmake --build build -t test
+            cmake --build build --target test
       - uses: actions/upload-artifact@v2
         with:
           name: freebsd-x64-${{matrix.name}}

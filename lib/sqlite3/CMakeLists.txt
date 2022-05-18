@@ -42,7 +42,7 @@ target_compile_definitions(sqlite3 PRIVATE
   ${SQLITE_API}
   -DSQLITE_ENABLE_UNLOCK_NOTIFY
   -DSQLITE_ENABLE_COLUMN_METADATA
-)
+  )
 
 if(BUILD_SHARED_LIBS)
   if(UNIX)
@@ -125,7 +125,7 @@ install(TARGETS sqlite3
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-)
+  )
 install(EXPORT unofficial-sqlite3-targets
   FILE unofficial-sqlite3-targets.cmake
   NAMESPACE unofficial::sqlite3::

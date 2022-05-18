@@ -49,4 +49,4 @@ jobs:
           MSYSTEM: ${{matrix.sys}}
         run: |
           set -x
-          cmake --build build -t test
+          cmake --build build --target test

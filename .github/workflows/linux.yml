@@ -38,4 +38,4 @@ jobs:
       - name: Run ctest
         run: |
           set -x
-          cmake --build build -t test
+          cmake --build build --target test
