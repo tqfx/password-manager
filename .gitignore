@@ -55,6 +55,7 @@ Pipfile.lock
 
 # Visual Studio Code
 .vscode
+.cache
 
 # CMake
 install*

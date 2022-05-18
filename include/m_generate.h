@@ -1,7 +1,7 @@
 /*!
  @file m_generate.h
  @brief generate manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once

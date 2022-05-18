@@ -1,7 +1,7 @@
 /*!
  @file console.c
  @brief console
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 #include "console.h"
 

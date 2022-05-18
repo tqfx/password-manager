@@ -1,7 +1,7 @@
 /*!
  @file m_in.c
  @brief input and output manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_io.h"
@@ -17,7 +17,7 @@ long m_io_fsize(FILE *handle)
     {
         return seek;
     }
-    if ((ret = fseek(handle, seek, SEEK_END), ret))
+    if (((void)(ret = fseek(handle, seek, SEEK_END)), ret))
     {
         return ret;
     }
@@ -26,7 +26,7 @@ long m_io_fsize(FILE *handle)
     {
         return size;
     }
-    if ((ret = fseek(handle, seek, SEEK_SET), ret))
+    if (((void)(ret = fseek(handle, seek, SEEK_SET)), ret))
     {
         return ret;
     }

@@ -1,14 +1,14 @@
 /*!
  @file m_key.h
  @brief key manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once
 #ifndef __M_KEY_H__
 #define __M_KEY_H__
 
-#include "liba.h"
+#include "a/def.h"
 
 #define M_KEY_OUTSIZ 0x20
 

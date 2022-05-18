@@ -1,7 +1,7 @@
 /*!
  @file main.c
  @brief main program
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "app.h"
@@ -60,7 +60,7 @@ static void main_help(void)
   -f --filename  filename\n\
      --import    filename\n\
      --export    filename\n\
-Copyright (C) 2020 tqfx. All rights reserved.";
+Copyright (C) 2020 tqfx, All rights reserved.";
     char *self = path_self();
     printf("%s\n%s\n", self, help);
     free(self);
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
         m_info_ctor(state->info);
     }
 
-    while ((opt = getopt_long(argc, argv, shortopts, longopts, &optind), opt) != -1)
+    while (((void)(opt = getopt_long(argc, argv, shortopts, longopts, &optind)), opt) != -1)
     {
         a_str_s ctx[1] = {A_STR_NUL};
         switch (opt)
@@ -240,7 +240,6 @@ int main(int argc, char *argv[])
             main_help();
             exit(EXIT_SUCCESS);
         }
-        break;
         case 'a':
         {
             OPTION_SET(state->option, OPTION_ADD);

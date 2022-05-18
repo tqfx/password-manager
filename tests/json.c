@@ -1,7 +1,7 @@
 /*!
  @file json.c
  @brief json manager testing
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_json.h"

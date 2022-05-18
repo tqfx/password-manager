@@ -1,7 +1,7 @@
 /*!
  @file sqlite.c
  @brief sqlite manager testing
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_sqlite.h"

@@ -1,16 +1,15 @@
 /*!
  @file m_word.h
  @brief password manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once
 #ifndef __M_WORD_H__
 #define __M_WORD_H__
 
-#include "liba.h"
-#include "a_vec.h"
-#include "a_str.h"
+#include "a/misc/vec.h"
+#include "a/misc/str.h"
 
 typedef a_vec_s m_word_s;
 

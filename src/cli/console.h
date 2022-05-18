@@ -1,7 +1,7 @@
 /*!
  @file console.h
  @brief console
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once

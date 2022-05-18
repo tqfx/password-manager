@@ -1,129 +1,88 @@
+cmake_minimum_required(VERSION 3.10)
+
+if(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND VCPKG_TARGET_TRIPLET)
+  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake")
+endif()
 if("${VCPKG_TARGET_TRIPLET}" MATCHES "x86-mingw(.*)")
   include(cmake/mingw32.cmake)
 elseif("${VCPKG_TARGET_TRIPLET}" MATCHES "x64-mingw(.*)")
   include(cmake/mingw64.cmake)
 endif()
+find_program(INCLUDE_WHAT_YOU_USE include-what-you-use)
+find_program(CLANG_FORMAT clang-format)
+find_program(CLANG_TIDY clang-tidy)
+find_program(CPPCHECK cppcheck)
+find_program(CPPLINT cpplint)
+include(cmake/core.cmake)
 
-cmake_minimum_required(VERSION 3.10)
+project(m VERSION 0.1.1 LANGUAGES C DESCRIPTION "Password Manager" HOMEPAGE_URL "https://github.com/tqfx/password-manager.git")
 
-project(mp VERSION 0.1.1 LANGUAGES C)
-
-add_subdirectory(lib)
-include(cmake/check.cmake)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Specifies the build type on single-configuration generators." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
 include(cmake/standard.cmake)
 
-if("${CMAKE_C_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR
-  "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
-  append_flag(-Wall -Wextra -Wpedantic)
-  check_flag(-Wdouble-promotion)
-  check_flag(-Wnull-dereference)
-  check_flag(-Wmissing-include-dirs)
-  check_flag(-Wswitch-default -Wswitch-enum)
-  check_flag(-Walloca)
-  check_flag(-Wattributes)
-  check_flag(-Wfloat-equal)
-  check_flag(-Wshadow)
-  check_flag(-Wundef)
-  check_flag(-Wunused -Wunused-macros)
-  check_flag(-Wcast-qual -Wcast-align)
-  check_flag(-Wconversion)
-  check_flag(-Wdate-time)
-  check_flag(-Waggregate-return)
-  check_flag(-Wmissing-declarations)
-  check_flag(-Wpacked -Wpadded)
-  check_flag(-Wredundant-decls)
-  check_flag(-Winline)
-  check_flag(-Winvalid-pch)
-  check_flag(-Wdisabled-optimization)
-  check_flag(-Wstack-protector)
-  check_flag_cc(-Winit-self)
-  check_flag_cc(-Wc++-compat)
-  check_flag_cc(-Wbad-function-cast)
-  check_flag_cc(-Wstrict-prototypes)
-  check_flag_cc(-Wold-style-definition)
-  check_flag_cc(-Wmissing-prototypes)
-  check_flag_cc(-Wnested-externs)
-elseif("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
-  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-  append_flag(/nologo /W4 /sdl)
-  if("${VCPKG_TARGET_TRIPLET}" MATCHES "(.*)windows-static(.*)")
-    value_remove(CMAKE_CXX_FLAGS_DEBUG /MDd)
-    value_append(CMAKE_CXX_FLAGS_DEBUG /MTd)
-    value_remove(CMAKE_CXX_FLAGS_RELEASE /MD)
-    value_append(CMAKE_CXX_FLAGS_RELEASE /MT)
-    value_remove(CMAKE_CXX_FLAGS_MINSIZEREL /MD)
-    value_append(CMAKE_CXX_FLAGS_MINSIZEREL /MT)
-    value_remove(CMAKE_CXX_FLAGS_RELWITHDEBINFO /MD)
-    value_append(CMAKE_CXX_FLAGS_RELWITHDEBINFO /MT)
-  endif()
+option(ENABLE_WARNINGS "Enable warnings" OFF)
+option(ENABLE_SANITIZE "Enable sanitize" OFF)
+option(ENABLE_CPPCHECK "Enable cppcheck" OFF)
+option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
+option(ENABLE_IYWU "Enable include-what-you-use" OFF)
+option(ENABLE_IPO "Enable interprocedural optimization" OFF)
+
+if(ENABLE_WARNINGS)
+  include(cmake/warnings.cmake)
 endif()
-# GNU
-if("${CMAKE_C_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-  check_flag(-Wstringop-overflow -Wstringop-truncation)
-  check_flag(-Walloc-zero)
-  check_flag(-Wduplicated-branches -Wduplicated-cond)
-  check_flag(-Wzero-length-bounds)
-  check_flag(-Wtrampolines)
-  check_flag(-Wunsafe-loop-optimizations)
-  check_flag(-Wno-pedantic-ms-format)
-  check_flag(-Wlogical-op)
+if(ENABLE_SANITIZE)
+  include(cmake/sanitize.cmake)
 endif()
-# Clang
-if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
-  check_flag(-Wshadow-all)
-  check_flag(-Wzero-length-array)
+if(ENABLE_IPO)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT ENABLE_IPO)
 endif()
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "RelWithDebInfo")
-elseif("${CMAKE_BUILD_TYPE}" MATCHES "[Dd]ebug" AND UNIX)
-  if("${CMAKE_C_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR
-    "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
-    append_flag(-fno-omit-frame-pointer -fsanitize=address)
-    append_flag(-fsanitize=undefined)
-    if(NOT ("${CMAKE_C_COMPILER_ID}" MATCHES "Apple[Cc]lang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Apple[Cc]lang"))
-      append_flag(-fsanitize=leak)
-    endif()
-  elseif("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
-    append_flag(/fsanitize=address)
-  endif()
+if(CMAKE_TOOLCHAIN_FILE AND VCPKG_TARGET_TRIPLET)
+  find_package(unofficial-sqlite3)
+  find_package(cJSON)
 endif()
 
-if(NOT ANDROID)
-  foreach(lang ${enabled_languages})
-    if(CMAKE_${lang}_LINK_OPTIONS_NO_PIE)
-      value_append(CMAKE_${lang}_LINK_FLAGS ${CMAKE_${lang}_LINK_OPTIONS_NO_PIE})
-    endif()
-  endforeach()
-endif()
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+add_subdirectory(lib)
 
 include(CheckIncludeFiles)
 check_include_files(getopt.h HAS_GETOPT_H)
-if (NOT HAS_GETOPT_H)
+if(NOT HAS_GETOPT_H)
   find_path(GETOPT_INCLUDE_DIRS NAMES getopt.h)
   find_library(GETOPT_LIBRARIES NAMES getopt)
 endif()
-find_package(unofficial-sqlite3 CONFIG REQUIRED)
-find_package(cJSON CONFIG REQUIRED)
 
-unset(SOURCE)
-aux_source_directory(src SOURCE)
-add_library(${PROJECT_NAME} ${SOURCE})
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/src
-  )
-target_link_libraries(${PROJECT_NAME} PUBLIC
-  a::a
-  unofficial::sqlite3::sqlite3
-  cjson
+file(GLOB SOURCE src/*.*)
+file(GLOB HEADER include/*.*)
+add_library(${PROJECT_NAME} ${SOURCE} ${HEADER})
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES C_VISIBILITY_PRESET hidden)
+if(ENABLE_IYWU AND INCLUDE_WHAT_YOU_USE)
+  set_target_properties(${PROJECT_NAME} PROPERTIES C_INCLUDE_WHAT_YOU_USE "${INCLUDE_WHAT_YOU_USE}")
+endif()
+if(ENABLE_CLANG_TIDY AND CLANG_TIDY)
+  set_target_properties(${PROJECT_NAME} PROPERTIES C_CLANG_TIDY "${CLANG_TIDY};--fix")
+endif()
+if(ENABLE_CPPCHECK AND CPPCHECK)
+  set_target_properties(${PROJECT_NAME} PROPERTIES C_CPPCHECK "${CPPCHECK};--enable=warning,performance")
+endif()
+if(ENABLE_IPO)
+  set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+endif()
+target_compile_options(${PROJECT_NAME} PRIVATE
+  $<$<C_COMPILER_ID:GNU,Clang,AppleClang,IntelLLVM>:-Wall -Wextra -Wpedantic>
+  $<$<C_COMPILER_ID:MSVC>:/W4 /sdl> $<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
   )
 if(MINGW)
   target_link_options(${PROJECT_NAME} PUBLIC
-    -fstack-protector-strong
+    $<$<BOOL:${cJSON_FOUND}>:-fstack-protector-strong>
     -static-libgcc
     -static-libstdc++
     -Wl,-Bstatic,--whole-archive
@@ -133,46 +92,74 @@ if(MINGW)
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/lib>
   $<INSTALL_INTERFACE:include>
   )
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  a::a unofficial::sqlite3::sqlite3 cjson
+  )
 
-unset(SOURCE)
-aux_source_directory(src/cli SOURCE)
-add_executable(m ${SOURCE})
-target_link_libraries(m ${PROJECT_NAME})
-target_compile_definitions(m PRIVATE _POSIX_C_SOURCE=200809L)
-if (NOT HAS_GETOPT_H)
-  target_include_directories(m PRIVATE ${GETOPT_INCLUDE_DIRS})
-  target_link_libraries(m ${GETOPT_LIBRARIES})
+file(GLOB_RECURSE SOURCE src/cli/*.*)
+
+add_executable(cli ${SOURCE})
+set_target_properties(cli PROPERTIES OUTPUT_NAME m)
+set_target_properties(cli PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(cli PROPERTIES C_VISIBILITY_PRESET hidden)
+if(ENABLE_IYWU AND INCLUDE_WHAT_YOU_USE)
+  set_target_properties(cli PROPERTIES C_INCLUDE_WHAT_YOU_USE "${INCLUDE_WHAT_YOU_USE}")
+endif()
+if(ENABLE_CLANG_TIDY AND CLANG_TIDY)
+  set_target_properties(cli PROPERTIES C_CLANG_TIDY "${CLANG_TIDY};--fix")
+endif()
+if(ENABLE_CPPCHECK AND CPPCHECK)
+  set_target_properties(cli PROPERTIES C_CPPCHECK "${CPPCHECK};--enable=warning,performance")
+endif()
+if(ENABLE_IPO)
+  set_target_properties(cli PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+endif()
+target_compile_options(cli PRIVATE
+  $<$<C_COMPILER_ID:GNU,Clang,AppleClang,IntelLLVM>:-Wall -Wextra -Wpedantic>
+  $<$<C_COMPILER_ID:MSVC>:/W4 /sdl> $<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
+  )
+target_link_options(cli PRIVATE $<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>)
+target_compile_definitions(cli PRIVATE _POSIX_C_SOURCE=200809L)
+target_link_libraries(cli PRIVATE ${PROJECT_NAME})
+if(NOT HAS_GETOPT_H)
+  target_include_directories(cli PRIVATE ${GETOPT_INCLUDE_DIRS})
+  target_link_libraries(cli PRIVATE ${GETOPT_LIBRARIES})
 endif()
 
-cmake_policy(SET CMP0077 NEW)
-option(BUILD_TESTING "Enable building tests" OFF)
-if(BUILD_TESTING)
-  enable_testing()
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-install(TARGETS ${PROJECT_NAME} m
-  EXPORT ${PROJECT_NAME}-target
+if(CLANG_FORMAT)
+  file(GLOB_RECURSE SOURCE include/*.h src/*.[ch] tests/*.[ch]*)
+  # https://clang.llvm.org/docs/ClangFormat.html
+  add_custom_target(${PROJECT_NAME}-format
+    COMMAND ${CLANG_FORMAT} -style=file -i ${SOURCE} --verbose
+    )
+endif()
+
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/
+  DESTINATION include FILES_MATCHING
+  REGEX ".*\.\(h\|hh\|hxx\|hpp\)$"
+  )
+install(TARGETS ${PROJECT_NAME} cli
+  EXPORT ${PROJECT_NAME}-targets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   )
-install(EXPORT ${PROJECT_NAME}-target
+install(EXPORT ${PROJECT_NAME}-targets
   FILE ${PROJECT_NAME}-config.cmake
   DESTINATION lib/cmake/${PROJECT_NAME}
-  )
-install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/
-  DESTINATION include FILES_MATCHING
-  REGEX ".*\.\(h\|hh\|hxx\|hpp\)$"
   )
 
 # https://www.doxygen.nl/manual/config.html
 find_package(Doxygen OPTIONAL_COMPONENTS dot mscgen dia)
 if(DOXYGEN_FOUND)
   # Project related configuration options
-  set(DOXYGEN_PROJECT_BRIEF "Password Manager")
   set(DOXYGEN_OPTIMIZE_OUTPUT_FOR_C YES)
   # Build related configuration options
   set(DOXYGEN_EXTRACT_ALL YES)
@@ -201,11 +188,11 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_PREDEFINED
     "__STDC_VERSION__=201112L"
     "__cplusplus=201703L"
-    "A_RESTRICT:=restrict"
-    "A_INLINE:=static inline"
+    "A_RESTRICT:="
+    "A_INLINE:="
     "A_PUBLIC:="
     "A_HIDDEN:="
-    "A_ASM:=asm"
+    "A_ASM:="
     )
   # Configuration options related to external references
   # Configuration options related to the dot tool
@@ -215,7 +202,7 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_INTERACTIVE_SVG YES)
     set(DOXYGEN_DOT_IMAGE_FORMAT svg)
   endif()
-  doxygen_add_docs(doc_${PROJECT_NAME}
+  doxygen_add_docs(${PROJECT_NAME}-doc
     ${CMAKE_CURRENT_LIST_DIR}/README.md
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/src
@@ -223,7 +210,7 @@ if(DOXYGEN_FOUND)
 endif()
 
 include(InstallRequiredSystemLibraries)
-set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE.txt)
 set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.md)
 set(CPACK_SOURCE_IGNORE_FILES
   ${CMAKE_CURRENT_LIST_DIR}/.git
@@ -231,9 +218,9 @@ set(CPACK_SOURCE_IGNORE_FILES
   ${CMAKE_CURRENT_LIST_DIR}/.github
   ${CMAKE_CURRENT_LIST_DIR}/.gitignore
   ${CMAKE_CURRENT_LIST_DIR}/.gitmodules
-  ${CMAKE_CURRENT_LIST_DIR}/.clang-format
   ${CMAKE_CURRENT_LIST_DIR}/.gitattributes
   ${CMAKE_CURRENT_LIST_DIR}/build
+  ${CMAKE_CURRENT_LIST_DIR}/html
   )
 set(CPACK_GENERATOR ZIP)
 include(CPack)

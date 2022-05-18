@@ -1,7 +1,7 @@
 /*!
  @file m_info.h
  @brief infomation manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once
@@ -9,7 +9,7 @@
 #define __M_INFO_H__
 
 #include "m_key.h"
-#include "a_vec.h"
+#include "a/misc/vec.h"
 
 typedef a_vec_s m_info_s;
 

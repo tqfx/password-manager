@@ -1,14 +1,14 @@
 /*!
  @file m_in.h
  @brief input and output manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once
 #ifndef __M_IO__
 #define __M_IO__
 
-#include "liba.h"
+#include "a/def.h"
 
 #include <stdlib.h>
 #include <stdio.h>

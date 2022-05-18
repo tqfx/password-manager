@@ -1,7 +1,7 @@
 /*!
  @file clipboard.c
  @brief clipboard
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "clipboard.h"

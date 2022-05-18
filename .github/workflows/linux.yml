@@ -8,8 +8,8 @@ jobs:
       fail-fast: false
       matrix:
         include: [
-          { name: dbg, preset: debug, target: install },
-          { name: rel, preset: release, target: install/strip },
+          { name: dbg, cc: clang, cxx: clang++, sanitizer: 1, buildtype: Debug, target: install },
+          { name: rel, cc: clang, cxx: clang++, sanitizer: 0, buildtype: Release, target: install/strip },
         ]
     steps:
       - uses: actions/checkout@v2
@@ -17,14 +17,25 @@ jobs:
           lfs: true
           submodules: true
       - name: Run cmake
+        env:
+          CC: ${{matrix.cc}}
+          CXX: ${{matrix.cxx}}
         run: |
-          cmake --preset=${{ matrix.preset }} -DBUILD_TESTING=ON
-          cmake --build --preset=${{ matrix.preset }} --target ${{ matrix.target }} --parallel
-      - name: Run ctest
-        run: |
-          ctest --preset=${{ matrix.preset }} --parallel
+          set -x
+          cmake -S . -B build \
+            -DBUILD_TESTING=ON \
+            -DENABLE_WARNINGS=ON \
+            -DCMAKE_INSTALL_PREFIX=install \
+            -DVCPKG_TARGET_TRIPLET=x64-linux \
+            -DENABLE_SANITIZE=${{matrix.sanitizer}} \
+            -DCMAKE_BUILD_TYPE=${{matrix.buildtype}}
+          cmake --build build --target ${{matrix.target}}
       - uses: actions/upload-artifact@v2
         with:
-          name: linux-x64-${{ matrix.name }}
+          name: linux-x64-${{matrix.name}}
           path: install/bin/*
           if-no-files-found: ignore
+      - name: Run ctest
+        run: |
+          set -x
+          cmake --build build -t test

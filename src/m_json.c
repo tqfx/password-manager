@@ -1,11 +1,10 @@
 /*!
  @file m_json.c
  @brief json manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_json.h"
-
 #include "m_io.h"
 
 #include <assert.h>

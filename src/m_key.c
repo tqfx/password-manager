@@ -1,18 +1,17 @@
 /*!
  @file m_key.c
  @brief key manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_key.h"
-
-#include "a_object.h"
+#include "a/oop.h"
 
 #include <assert.h>
 #include <string.h>
 
-A_OBJECT_NEW(m_key_s, m_key_new, m_key_ctor)
-A_OBJECT_DIE(m_key_s, m_key_die, m_key_dtor)
+A_OOP_NEW(m_key_s, m_key_new, m_key_ctor)
+A_OOP_DIE(m_key_s, m_key_die, m_key_dtor)
 
 void m_key_ctor(m_key_s *ctx)
 {
@@ -27,9 +26,9 @@ void m_key_ctor(m_key_s *ctx)
 void m_key_dtor(m_key_s *ctx)
 {
     assert(ctx);
-    ctx->url ? (free(ctx->url), ctx->url = 0) : 0;
-    ctx->blob ? (free(ctx->blob), ctx->blob = 0) : 0;
-    ctx->text ? (free(ctx->text), ctx->text = 0) : 0;
+    ctx->url ? ((void)(free(ctx->url)), ctx->url = 0) : 0;
+    ctx->blob ? ((void)(free(ctx->blob)), ctx->blob = 0) : 0;
+    ctx->text ? ((void)(free(ctx->text)), ctx->text = 0) : 0;
     ctx->type = M_KEY_EMAIL;
     ctx->size = M_KEY_OUTSIZ >> 1;
 }

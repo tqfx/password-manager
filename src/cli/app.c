@@ -1,7 +1,7 @@
 /*!
  @file app.c
  @brief application
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "app.h"
@@ -372,7 +372,7 @@ int app_del_word_idx(const m_word_s *word)
         a_str_s *str = m_word_at(word, i);
         sscanf(a_str_val(str), "%u", &x);
         if (x < a_vec_len(state->word) &&
-            (str = m_word_at(state->word, x), a_str_len(str)))
+            ((void)(str = m_word_at(state->word, x)), a_str_len(str)))
         {
             STATUS_SET(state->status, STATUS_MODP);
             app_print_word(x, a_str_val(str));
@@ -393,7 +393,7 @@ int app_del_info_idx(const m_info_s *info)
         m_key_s *key = m_info_at(info, i);
         sscanf(m_key_text(key), "%u", &x);
         if (x < a_vec_len(state->info) &&
-            (key = m_info_at(state->info, x), m_key_text(key)))
+            ((void)(key = m_info_at(state->info, x)), m_key_text(key)))
         {
             STATUS_SET(state->status, STATUS_MODK);
             app_print_key(x, key);

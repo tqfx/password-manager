@@ -1,7 +1,7 @@
 /*!
  @file key.c
  @brief key manager testing
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_key.h"

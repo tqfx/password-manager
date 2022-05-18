@@ -12,8 +12,8 @@ Set the environment variable `VCPKG_INSTALLATION_ROOT` to point to [vcpkg](https
 ## release
 
 ```bash
-cmake --preset=release
-cmake --build --preset=release
+cmake -S . -B build
+cmake --build build
 ```
 
 ## mingw on linux
@@ -27,15 +27,15 @@ sudo apt-get install -y cmake ninja-build zip unzip curl git pkg-config mingw-w6
 ### mingw32
 
 ```bash
-cmake --preset=mingw32
-cmake --build --preset=mingw32
+cmake -S . -B build -DVCPKG_TARGET_TRIPLET=x86-mingw-static
+cmake --build build
 ```
 
 ### mingw64
 
 ```bash
-cmake --preset=mingw64
-cmake --build --preset=mingw64
+cmake -S . -B build -DVCPKG_TARGET_TRIPLET=x64-mingw-static
+cmake --build build
 ```
 
 ## mingw on windows
@@ -45,15 +45,15 @@ cmake --build --preset=mingw64
 ### mingw32
 
 ```bash
-cmake --preset=mingw32 -G "MinGW Makefiles"
-cmake --build --preset=mingw32
+cmake -S . -B build -G "MinGW Makefiles" -DVCPKG_TARGET_TRIPLET=x86-mingw-static
+cmake --build build
 ```
 
 ### mingw64
 
 ```bash
-cmake --preset=mingw64 -G "MinGW Makefiles"
-cmake --build --preset=mingw64
+cmake -S . -B build -G "MinGW Makefiles" -DVCPKG_TARGET_TRIPLET=x64-mingw-static
+cmake --build build
 ```
 
 ## termux
@@ -63,6 +63,6 @@ pkg install -y clang cmake ninja zip unzip curl git pkg-config
 ```
 
 ```bash
-cmake --preset=termux
-cmake --build --preset=termux
+cmake -S . -B build -DVCPKG_TARGET_TRIPLET=arm64-linux
+cmake --build build
 ```

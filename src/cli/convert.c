@@ -1,7 +1,7 @@
 /*!
  @file convert.c
  @brief code conversion
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "convert.h"

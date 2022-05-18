@@ -1,16 +1,16 @@
 /*!
  @file m_word.c
  @brief password manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_word.h"
-#include "a_object.h"
+#include "a/oop.h"
 
 #include <assert.h>
 
-A_OBJECT_NEW(m_word_s, m_word_new, m_word_ctor)
-A_OBJECT_DIE(m_word_s, m_word_die, m_word_dtor)
+A_OOP_NEW(m_word_s, m_word_new, m_word_ctor)
+A_OOP_DIE(m_word_s, m_word_die, m_word_dtor)
 
 void m_word_ctor(m_word_s *ctx)
 {

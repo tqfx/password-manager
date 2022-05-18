@@ -1,7 +1,7 @@
 /*!
  @file m_sqlite.c
  @brief sqlite for flower password
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_sqlite.h"
@@ -198,7 +198,7 @@ int m_sqlite_out_info(sqlite3 *db, m_info_s *out)
         {
             m_key_set_blob(key, text);
         }
-        if ((text = sqlite3_column_text(stmt, 4), text))
+        if (((void)(text = sqlite3_column_text(stmt, 4)), text))
         {
             m_key_set_url(key, text);
         }

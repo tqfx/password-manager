@@ -1,13 +1,13 @@
 /*!
  @file m_generate.c
  @brief generate manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_generate.h"
 
-#include "a_convert.h"
-#include "a_hmac.h"
+#include "a/misc/convert.h"
+#include "a/cksum/hmac.h"
 
 #include <assert.h>
 #include <string.h>

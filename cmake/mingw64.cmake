@@ -3,6 +3,8 @@ set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
 find_program(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
 find_program(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}-g++)
+find_program(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}-gcc-ranlib)
+find_program(CMAKE_AR ${TOOLCHAIN_PREFIX}-gcc-ar)
 
 get_filename_component(TOOLCHAIN_PATH "${CMAKE_C_COMPILER}" DIRECTORY)
 get_filename_component(TOOLCHAIN_PATH "${TOOLCHAIN_PATH}" DIRECTORY)

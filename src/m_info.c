@@ -1,17 +1,17 @@
 /*!
  @file m_info.c
  @brief infomation manager
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_info.h"
-#include "a_object.h"
+#include "a/oop.h"
 
 #include <assert.h>
 #include <string.h>
 
-A_OBJECT_NEW(m_info_s, m_info_new, m_info_ctor)
-A_OBJECT_DIE(m_info_s, m_info_die, m_info_dtor)
+A_OOP_NEW(m_info_s, m_info_new, m_info_ctor)
+A_OOP_DIE(m_info_s, m_info_die, m_info_dtor)
 
 void m_info_ctor(m_info_s *ctx)
 {

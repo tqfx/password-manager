@@ -1,7 +1,7 @@
 /*!
  @file path.h
  @brief Path handling
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #pragma once

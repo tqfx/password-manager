@@ -8,8 +8,8 @@ jobs:
       fail-fast: false
       matrix:
         include: [
-          { sys: MINGW64, preset: mingw64 },
-          { sys: MINGW32, preset: mingw32 },
+          { name: mingw64, sys: MINGW64, triplet: x64-mingw-static },
+          { name: mingw32, sys: MINGW32, triplet: x86-mingw-static },
         ]
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
         with:
           update: true
           location: D:\
-          msystem: ${{ matrix.sys }}
+          msystem: ${{matrix.sys}}
           pacboy: >-
             make:p
             cmake:p
@@ -28,12 +28,25 @@ jobs:
       - name: Run cmake
         shell: msys2 {0}
         env:
-          MSYSTEM: ${{ matrix.sys }}
+          MSYSTEM: ${{matrix.sys}}
         run: |
-          cmake --preset=${{ matrix.preset }} -G "MinGW Makefiles"
-          cmake --build --preset=${{ matrix.preset }} --target install/strip --parallel
+          set -x
+          cmake -S . -B build \
+            -DBUILD_TESTING=ON \
+            -DENABLE_WARNINGS=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=install \
+            -DVCPKG_TARGET_TRIPLET=${{matrix.triplet}}
+          cmake --build build --target install/strip
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.preset }}-rel
+          name: ${{matrix.name}}-rel
           path: install/bin/*
           if-no-files-found: ignore
+      - name: Run ctest
+        shell: msys2 {0}
+        env:
+          MSYSTEM: ${{matrix.sys}}
+        run: |
+          set -x
+          cmake --build build -t test

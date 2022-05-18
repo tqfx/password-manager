@@ -1,7 +1,7 @@
 /*!
  @file generate.c
  @brief generate manager testing
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "m_generate.h"

@@ -8,8 +8,8 @@ jobs:
       fail-fast: false
       matrix:
         include: [
-          { preset: mingw64 },
-          { preset: mingw32 },
+          { name: mingw64, triplet: x64-mingw-static },
+          { name: mingw32, triplet: x86-mingw-static },
         ]
     steps:
       - uses: actions/checkout@v2
@@ -18,13 +18,21 @@ jobs:
           submodules: true
       - name: Run apt-get
         run: |
-          sudo apt-get install -y mingw-w64
+          set -x
+          sudo apt-get -y update
+          sudo apt-get -y install mingw-w64
       - name: Run cmake
         run: |
-          cmake --preset=${{ matrix.preset }}
-          cmake --build --preset=${{ matrix.preset }} --target install/strip --parallel
+          set -x
+          cmake -S . -B build \
+            -DBUILD_TESTING=ON \
+            -DENABLE_WARNINGS=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=install \
+            -DVCPKG_TARGET_TRIPLET=${{matrix.triplet}}
+          cmake --build build --target install/strip
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.preset }}-rel
+          name: ${{matrix.name}}-rel
           path: install/bin/*
           if-no-files-found: ignore

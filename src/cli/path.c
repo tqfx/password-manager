@@ -1,7 +1,7 @@
 /*!
  @file path.c
  @brief Path handling
- @copyright Copyright (C) 2020 tqfx. All rights reserved.
+ @copyright Copyright (C) 2020 tqfx, All rights reserved.
 */
 
 #include "path.h"
