@@ -130,7 +130,10 @@ int m_generate1(const m_key_s *key, const char *word, char **out)
     return 0;
 }
 
-#pragma pack(push, 4)
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpadded"
+#endif /* __GNUC__ || __clang__ */
 static struct
 {
     /* points to rule data */
@@ -144,7 +147,7 @@ static struct
     unsigned int l2;
     unsigned int l3;
     /* character table */
-    const char ch[60];
+    const char ch[61];
 } state[1] = {
     {
         .s0 = 0,
@@ -158,14 +161,16 @@ static struct
         .ch = {
             /* clang-format off */
             'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h',
-            'H', 'i', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', '0', '1', '2', '3', '4',
+            'H', 'i', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', '0', '1', '2', '3', '4', 'I',
             '5', '6', '7', '8', '9', 'n', 'N', 'o', 'p', 'P', 'q', 'Q', 'r', 'R', 's',
             'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z',
             /* clang-format on */
         },
     },
 };
-#pragma pack(pop)
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif /* __GNUC__ || __clang__ */
 
 void m_generate_setrule(const void *s0, const void *s1, const void *s2, const void *s3)
 {
